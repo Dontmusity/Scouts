@@ -25,13 +25,14 @@ export function MatchForm() {
   const phases = Array.from(new Set(config.fields.map((f) => f.phase)))
 
   async function handleSave() {
-    if (!matchNumber || !teamNumber) return
+    if (!matchNumber.trim() || !teamNumber.trim()) return
     const entry: MatchEntry = {
       id: crypto.randomUUID(),
       gameId: config.gameId,
-      matchNumber,
-      teamNumber,
-      scoutName,
+      // trim: "254 " y "254" serían dos equipos distintos en el dashboard
+      matchNumber: matchNumber.trim(),
+      teamNumber: teamNumber.trim(),
+      scoutName: scoutName.trim(),
       createdAt: Date.now(),
       values,
     }
@@ -85,7 +86,7 @@ export function MatchForm() {
 
       <button
         className="fixed bottom-20 left-1/2 w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 rounded-xl bg-emerald-600 py-4 text-xl font-bold text-white shadow-lg disabled:opacity-40"
-        disabled={!matchNumber || !teamNumber}
+        disabled={!matchNumber.trim() || !teamNumber.trim()}
         onClick={handleSave}
       >
         Guardar partido

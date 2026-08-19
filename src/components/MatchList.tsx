@@ -1,10 +1,12 @@
 import { lazy, Suspense, useRef, useState } from 'react'
 import { useScoutStore } from '../store/useScoutStore'
-import type { MatchEntry } from '../lib/db'
+import { useSyncStore } from '../store/useSyncStore'
+import { validateMatchEntry, type MatchEntry } from '../lib/db'
 import { compressMatch } from '../lib/qr'
 import { QrCode } from './QrCode'
 
 const QrScanner = lazy(() => import('./QrScanner').then((m) => ({ default: m.QrScanner })))
+const SyncPanel = lazy(() => import('./SyncPanel').then((m) => ({ default: m.SyncPanel })))
 
 function toCsv(matches: MatchEntry[], fieldIds: string[]): string {
   const header = ['matchNumber', 'teamNumber', 'scoutName', 'createdAt', ...fieldIds]
@@ -12,7 +14,7 @@ function toCsv(matches: MatchEntry[], fieldIds: string[]): string {
     m.matchNumber,
     m.teamNumber,
     m.scoutName,
-    new Date(m.createdAt).toISOString(),
+    Number.isFinite(m.createdAt) ? new Date(m.createdAt).toISOString() : '',
     ...fieldIds.map((id) => String(m.values[id] ?? '')),
   ])
   return [header, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
@@ -34,11 +36,33 @@ export function MatchList() {
   const [copied, setCopied] = useState(false)
   const [qrMatch, setQrMatch] = useState<MatchEntry | null>(null)
   const [scanning, setScanning] = useState(false)
+  const [syncing, setSyncing] = useState(false)
+  const [importMsg, setImportMsg] = useState<string | null>(null)
+  const syncStatus = useSyncStore((s) => s.status)
 
   async function handleImport(file: File) {
-    const text = await file.text()
-    const parsed = JSON.parse(text) as MatchEntry[]
-    for (const m of parsed) await addMatch(m)
+    try {
+      const parsed: unknown = JSON.parse(await file.text())
+      if (!Array.isArray(parsed)) throw new Error('El archivo debe ser un arreglo de partidos.')
+      let imported = 0
+      let skipped = 0
+      for (const raw of parsed) {
+        const m = validateMatchEntry(raw)
+        // un gameId distinto quedaría invisible tras recargar (listMatches filtra por juego)
+        if (m.gameId !== config.gameId) {
+          skipped++
+          continue
+        }
+        await addMatch(m)
+        imported++
+      }
+      setImportMsg(`✓ ${imported} importados${skipped ? `, ${skipped} omitidos (otro juego)` : ''}`)
+    } catch (e) {
+      setImportMsg(`✗ Import falló: ${e instanceof Error ? e.message : 'archivo inválido'}`)
+    } finally {
+      // sin esto, elegir el mismo archivo otra vez no dispara onChange
+      if (fileRef.current) fileRef.current.value = ''
+    }
   }
 
   async function handleCopy() {
@@ -79,6 +103,12 @@ export function MatchList() {
         >
           📷 Escanear QR (pit/central)
         </button>
+        <button
+          className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-bold text-white"
+          onClick={() => setSyncing(true)}
+        >
+          📶 Sincronizar por Wi-Fi{syncStatus === 'connected' ? ' · ● Conectado' : ''}
+        </button>
         <input
           ref={fileRef}
           type="file"
@@ -87,6 +117,8 @@ export function MatchList() {
           onChange={(e) => e.target.files?.[0] && handleImport(e.target.files[0])}
         />
       </div>
+
+      {importMsg && <p className="text-sm font-bold text-slate-300">{importMsg}</p>}
 
       <p className="text-sm text-slate-400">{matches.length} partidos guardados localmente.</p>
 
@@ -127,6 +159,12 @@ export function MatchList() {
       {scanning && (
         <Suspense fallback={null}>
           <QrScanner onClose={() => setScanning(false)} />
+        </Suspense>
+      )}
+
+      {syncing && (
+        <Suspense fallback={null}>
+          <SyncPanel onClose={() => setSyncing(false)} />
         </Suspense>
       )}
     </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useScoutStore } from '../store/useScoutStore'
-import type { GameConfig } from '../types/gameConfig'
+import { validateGameConfig, type GameConfig } from '../types/gameConfig'
 
 export function ConfigEditor() {
   const { config, setConfig } = useScoutStore()
@@ -9,11 +9,7 @@ export function ConfigEditor() {
 
   function handleApply() {
     try {
-      const parsed = JSON.parse(text) as GameConfig
-      if (!parsed.gameId || !Array.isArray(parsed.fields)) {
-        throw new Error('El JSON debe tener "gameId" y un arreglo "fields".')
-      }
-      setConfig(parsed)
+      setConfig(validateGameConfig(JSON.parse(text)))
       setError(null)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'JSON inválido')
@@ -21,9 +17,17 @@ export function ConfigEditor() {
   }
 
   function setMode(mode: GameConfig['mode']) {
-    const next = { ...config, mode }
-    setText(JSON.stringify(next, null, 2))
-    setConfig(next)
+    // Cambia el modo sobre el borrador actual, no sobre el último config
+    // aplicado — así el toggle no destruye ediciones sin guardar.
+    try {
+      const draft = JSON.parse(text) as GameConfig
+      const next = { ...draft, mode }
+      setText(JSON.stringify(next, null, 2))
+      setConfig(validateGameConfig(next))
+      setError(null)
+    } catch {
+      setError('El JSON del borrador no es válido; corrígelo antes de cambiar el modo.')
+    }
   }
 
   return (
