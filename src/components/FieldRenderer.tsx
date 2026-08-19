@@ -125,6 +125,7 @@ export function FieldRenderer({ field, value, onChange }: Props) {
         <input
           type="number"
           inputMode="numeric"
+          list={field.suggestTeams ? 'event-teams' : undefined}
           className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3 text-lg text-white"
           value={s}
           onChange={(e) => {

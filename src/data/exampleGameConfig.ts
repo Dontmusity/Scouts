@@ -11,8 +11,8 @@ export const exampleGameConfig: GameConfig = {
   mode: 'FRC',
   fields: [
     // Inicio: con qué otros equipos estaba la alianza
-    { id: 'allyTeam1', label: 'Aliado 1 (# de equipo)', type: 'number', phase: 'prematch' },
-    { id: 'allyTeam2', label: 'Aliado 2 (# de equipo)', type: 'number', phase: 'prematch' },
+    { id: 'allyTeam1', label: 'Aliado 1 (# de equipo)', type: 'number', phase: 'prematch', suggestTeams: true },
+    { id: 'allyTeam2', label: 'Aliado 2 (# de equipo)', type: 'number', phase: 'prematch', suggestTeams: true },
 
     // Autónomo
     { id: 'startPosition', label: 'Posición inicial', type: 'dropdown', phase: 'auto', options: ['Izquierda', 'Centro', 'Derecha'] },

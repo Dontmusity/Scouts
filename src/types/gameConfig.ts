@@ -53,6 +53,8 @@ export interface TextField extends BaseField {
  */
 export interface NumberField extends BaseField {
   type: 'number'
+  /** Sugerir los equipos del evento sincronizado (datalist) al escribir. */
+  suggestTeams?: boolean
 }
 
 export type GameField =
