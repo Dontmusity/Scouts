@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="200" y1="0" x2="200" y2="300" stroke="#334155" stroke-width="2"/>
+  <text x="200" y="150" font-family="Arial" font-size="16" fill="#64748b" text-anchor="middle">Campo (ejemplo)</text>
+</svg>
