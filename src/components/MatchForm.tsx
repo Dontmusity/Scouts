@@ -7,6 +7,7 @@ import type { GameField } from '../types/gameConfig'
 import type { MatchEntry } from '../lib/db'
 
 const phaseLabel: Record<GameField['phase'], string> = {
+  prematch: 'Inicio',
   auto: 'Autónomo',
   teleop: 'TeleOp',
   endgame: 'Endgame',

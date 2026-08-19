@@ -1,25 +1,37 @@
 import type { GameConfig } from '../types/gameConfig'
 
 /**
- * Plantilla de ejemplo — no corresponde a un juego oficial real.
- * Edítala desde la pestaña Admin o reemplázala por el JSON del juego de la temporada.
+ * Config de la temporada — editable desde la pestaña Admin.
+ * Nota: cambiar gameId inicia una partición nueva de partidos en IndexedDB.
  */
 export const exampleGameConfig: GameConfig = {
-  gameId: 'example-2026',
-  gameName: 'Juego de Ejemplo',
+  gameId: 'frc-2026',
+  gameName: 'FRC 2026',
   season: 2026,
   mode: 'FRC',
   fields: [
+    // Inicio: con qué otros equipos estaba la alianza
+    { id: 'allyTeam1', label: 'Aliado 1 (# de equipo)', type: 'number', phase: 'prematch' },
+    { id: 'allyTeam2', label: 'Aliado 2 (# de equipo)', type: 'number', phase: 'prematch' },
+
+    // Autónomo
     { id: 'startPosition', label: 'Posición inicial', type: 'dropdown', phase: 'auto', options: ['Izquierda', 'Centro', 'Derecha'] },
+    { id: 'startSpot', label: 'Punto de inicio (clic en el campo)', type: 'fieldMap', phase: 'auto', imageUrl: './field-placeholder.svg' },
     { id: 'autoMobility', label: 'Salió de zona (Mobility)', type: 'toggle', phase: 'auto' },
-    { id: 'autoScored', label: 'Piezas anotadas (Auto)', type: 'counter', phase: 'auto', min: 0, max: 20, step: 1 },
-    { id: 'teleopScoredLow', label: 'Piezas anotadas — Bajo', type: 'counter', phase: 'teleop', min: 0, max: 30, step: 1 },
-    { id: 'teleopScoredHigh', label: 'Piezas anotadas — Alto', type: 'counter', phase: 'teleop', min: 0, max: 30, step: 1 },
+    { id: 'autoShooter', label: 'Funcionalidad del shooter (Auto)', type: 'rating', phase: 'auto', max: 5 },
+
+    // TeleOp
+    { id: 'teleopShooter', label: 'Funcionalidad del shooter (TeleOp)', type: 'rating', phase: 'teleop', max: 5 },
+    { id: 'movesBalls', label: 'Desplaza pelotas', type: 'toggle', phase: 'teleop' },
     { id: 'defensePlayed', label: 'Jugó defensa', type: 'toggle', phase: 'teleop' },
+
+    // Endgame
     { id: 'endgameClimb', label: 'Resultado de Endgame', type: 'dropdown', phase: 'endgame', options: ['Ninguno', 'Parqueado', 'Colgado - Bajo', 'Colgado - Alto'] },
+    { id: 'allianceScore', label: 'Puntaje final de la alianza', type: 'number', phase: 'endgame' },
+
+    // Subjetivo
     { id: 'driverSkill', label: 'Habilidad del piloto', type: 'rating', phase: 'subjective', max: 5 },
     { id: 'robotSpeed', label: 'Velocidad del robot', type: 'rating', phase: 'subjective', max: 5 },
-    { id: 'startSpot', label: 'Punto de inicio (clic en el campo)', type: 'fieldMap', phase: 'auto', imageUrl: './field-placeholder.svg' },
     { id: 'notes', label: 'Notas', type: 'text', phase: 'subjective' },
   ],
 }

@@ -5,13 +5,14 @@ export type FieldType =
   | 'rating'
   | 'fieldMap'
   | 'text'
+  | 'number'
 
 export interface BaseField {
   id: string
   label: string
   type: FieldType
   /** Which phase of the match this field belongs to. */
-  phase: 'auto' | 'teleop' | 'endgame' | 'pit' | 'subjective'
+  phase: 'prematch' | 'auto' | 'teleop' | 'endgame' | 'pit' | 'subjective'
 }
 
 export interface CounterField extends BaseField {
@@ -45,6 +46,15 @@ export interface TextField extends BaseField {
   type: 'text'
 }
 
+/**
+ * Entrada numérica directa (teclado), para valores grandes que sería tedioso
+ * contar con +/- (números de equipo aliados, puntaje de alianza). A diferencia
+ * de counter, NO se suma en las estadísticas por equipo (ver teamStats).
+ */
+export interface NumberField extends BaseField {
+  type: 'number'
+}
+
 export type GameField =
   | CounterField
   | ToggleField
@@ -52,6 +62,7 @@ export type GameField =
   | RatingField
   | FieldMapField
   | TextField
+  | NumberField
 
 export interface GameConfig {
   /** e.g. "reefscape-2025" — used as the IndexedDB partition key. */
@@ -62,8 +73,8 @@ export interface GameConfig {
   fields: GameField[]
 }
 
-const FIELD_TYPES: FieldType[] = ['counter', 'toggle', 'dropdown', 'rating', 'fieldMap', 'text']
-const PHASES: BaseField['phase'][] = ['auto', 'teleop', 'endgame', 'pit', 'subjective']
+const FIELD_TYPES: FieldType[] = ['counter', 'toggle', 'dropdown', 'rating', 'fieldMap', 'text', 'number']
+const PHASES: BaseField['phase'][] = ['prematch', 'auto', 'teleop', 'endgame', 'pit', 'subjective']
 
 /**
  * Valida un config antes de persistirlo — un config inválido guardado en
