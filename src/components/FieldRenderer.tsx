@@ -50,9 +50,10 @@ export function FieldRenderer({ field, value, onChange }: Props) {
 
     case 'dropdown': {
       const current = typeof value === 'string' ? value : ''
+      // ?? []: un config viejo persistido sin "options" no debe tumbar el render
       return (
         <div className="flex flex-wrap gap-2">
-          {field.options.map((opt) => (
+          {(field.options ?? []).map((opt) => (
             <button
               key={opt}
               className={`${btn} ${current === opt ? 'bg-sky-600 text-white' : 'bg-slate-700 text-slate-300'}`}

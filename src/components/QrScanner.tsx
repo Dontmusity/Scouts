@@ -5,11 +5,21 @@ import { decompressMatch } from '../lib/qr'
 
 const READER_ID = 'qr-reader'
 
-export function QrScanner({ onClose }: { onClose: () => void }) {
+export function QrScanner({
+  onClose,
+  onDecode,
+}: {
+  onClose: () => void
+  /** Si se pasa, reemplaza la importación de partidos (p. ej. escanear un SDP de sincronización). */
+  onDecode?: (text: string) => Promise<void>
+}) {
   const addMatch = useScoutStore((s) => s.addMatch)
   const [log, setLog] = useState<string[]>([])
   const lastScanned = useRef<string | null>(null)
   const scannerRef = useRef<Html5Qrcode | null>(null)
+  // ref para que un onDecode nuevo en cada render no reinicie la cámara
+  const onDecodeRef = useRef(onDecode)
+  onDecodeRef.current = onDecode
 
   useEffect(() => {
     const scanner = new Html5Qrcode(READER_ID)
@@ -38,6 +48,10 @@ export function QrScanner({ onClose }: { onClose: () => void }) {
           if (decodedText === lastScanned.current) return
           lastScanned.current = decodedText
           try {
+            if (onDecodeRef.current) {
+              await onDecodeRef.current(decodedText)
+              return
+            }
             const match = decompressMatch(decodedText)
             await addMatch(match)
             setLog((prev) => [`✓ Partido ${match.matchNumber} · Equipo ${match.teamNumber}`, ...prev])

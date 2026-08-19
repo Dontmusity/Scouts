@@ -12,6 +12,32 @@ export interface MatchEntry {
   values: Record<string, number | boolean | string>
 }
 
+/**
+ * Valida datos que llegan de fuera (QR escaneado, import JSON, canal Wi-Fi)
+ * antes de persistirlos — un entry malformado guardado rompería el export CSV
+ * y el dashboard para todo el dataset.
+ */
+export function validateMatchEntry(v: unknown): MatchEntry {
+  const m = v as Partial<MatchEntry>
+  if (
+    !m ||
+    typeof m !== 'object' ||
+    typeof m.id !== 'string' ||
+    !m.id ||
+    typeof m.gameId !== 'string' ||
+    typeof m.matchNumber !== 'string' ||
+    typeof m.teamNumber !== 'string' ||
+    typeof m.scoutName !== 'string' ||
+    !Number.isFinite(m.createdAt) ||
+    !m.values ||
+    typeof m.values !== 'object' ||
+    Array.isArray(m.values)
+  ) {
+    throw new Error('Datos de partido inválidos')
+  }
+  return m as MatchEntry
+}
+
 interface ScoutingDB extends DBSchema {
   matches: {
     key: string
@@ -46,7 +72,9 @@ export async function saveMatch(entry: MatchEntry) {
 
 export async function listMatches(gameId: string): Promise<MatchEntry[]> {
   const db = await getDb()
-  return db.getAllFromIndex('matches', 'by-gameId', gameId)
+  const rows = await db.getAllFromIndex('matches', 'by-gameId', gameId)
+  // el índice devuelve en orden de UUID (aleatorio); la UI asume orden cronológico
+  return rows.sort((a, b) => a.createdAt - b.createdAt)
 }
 
 export async function deleteMatch(id: string) {

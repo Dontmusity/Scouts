@@ -70,6 +70,11 @@ export const useEventStore = create<EventState>()(
         }
       },
     }),
-    { name: 'scouting-event-store' },
+    {
+      name: 'scouting-event-store',
+      // syncing/error son transitorios: si se persistiera syncing:true (app
+      // cerrada a mitad de un fetch), los botones quedarían bloqueados para siempre.
+      partialize: ({ syncing: _s, error: _e, ...rest }) => rest,
+    },
   ),
 )

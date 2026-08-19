@@ -61,3 +61,45 @@ export interface GameConfig {
   mode: 'FRC' | 'FTC'
   fields: GameField[]
 }
+
+const FIELD_TYPES: FieldType[] = ['counter', 'toggle', 'dropdown', 'rating', 'fieldMap', 'text']
+const PHASES: BaseField['phase'][] = ['auto', 'teleop', 'endgame', 'pit', 'subjective']
+
+/**
+ * Valida un config antes de persistirlo — un config inválido guardado en
+ * IndexedDB rompería el render en cada arranque sin forma de repararlo.
+ * Lanza Error con mensaje en español apto para mostrar en el editor.
+ */
+export function validateGameConfig(parsed: unknown): GameConfig {
+  const c = parsed as Partial<GameConfig>
+  if (!c || typeof c !== 'object') throw new Error('El JSON debe ser un objeto.')
+  if (typeof c.gameId !== 'string' || !c.gameId) throw new Error('Falta "gameId" (texto).')
+  if (typeof c.gameName !== 'string' || !c.gameName) throw new Error('Falta "gameName" (texto).')
+  if (typeof c.season !== 'number') throw new Error('Falta "season" (número).')
+  if (c.mode !== 'FRC' && c.mode !== 'FTC') throw new Error('"mode" debe ser "FRC" o "FTC".')
+  if (!Array.isArray(c.fields) || c.fields.length === 0) throw new Error('"fields" debe ser un arreglo con al menos un campo.')
+
+  const ids = new Set<string>()
+  for (const [i, f] of c.fields.entries()) {
+    const at = `fields[${i}]`
+    if (!f || typeof f !== 'object') throw new Error(`${at} debe ser un objeto.`)
+    if (typeof f.id !== 'string' || !f.id) throw new Error(`${at}: falta "id" (texto).`)
+    if (ids.has(f.id)) throw new Error(`${at}: id "${f.id}" repetido.`)
+    ids.add(f.id)
+    if (typeof f.label !== 'string' || !f.label) throw new Error(`${at}: falta "label" (texto).`)
+    if (!FIELD_TYPES.includes(f.type)) throw new Error(`${at}: "type" debe ser uno de: ${FIELD_TYPES.join(', ')}.`)
+    if (!PHASES.includes(f.phase)) throw new Error(`${at}: "phase" debe ser una de: ${PHASES.join(', ')}.`)
+    if (f.type === 'dropdown' && (!Array.isArray(f.options) || f.options.some((o) => typeof o !== 'string')))
+      throw new Error(`${at}: un dropdown necesita "options" (arreglo de textos).`)
+    if (f.type === 'fieldMap' && typeof f.imageUrl !== 'string')
+      throw new Error(`${at}: un fieldMap necesita "imageUrl" (texto).`)
+    if (f.type === 'rating' && f.max !== undefined && typeof f.max !== 'number')
+      throw new Error(`${at}: "max" debe ser un número.`)
+    if (f.type === 'counter') {
+      for (const k of ['min', 'max', 'step'] as const) {
+        if (f[k] !== undefined && typeof f[k] !== 'number') throw new Error(`${at}: "${k}" debe ser un número.`)
+      }
+    }
+  }
+  return c as GameConfig
+}
