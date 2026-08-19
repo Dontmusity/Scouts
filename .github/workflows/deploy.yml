@@ -2,7 +2,8 @@ name: Deploy Scouting PWA to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # master es el branch default: el entorno github-pages solo permite deploys desde él
+    branches: [main, master]
   workflow_dispatch:
 
 permissions:
