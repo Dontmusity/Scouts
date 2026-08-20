@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useScoutStore } from '../store/useScoutStore'
+import { useEventStore } from '../store/useEventStore'
 import { FieldRenderer } from './FieldRenderer'
 import { TeamPicker } from './TeamPicker'
 import { QrCode } from './QrCode'
 import { compressMatch } from '../lib/qr'
+import { findMatchAutofill } from '../lib/matchLookup'
 import type { GameField } from '../types/gameConfig'
 import type { MatchEntry } from '../lib/db'
 
@@ -24,8 +26,44 @@ export function MatchForm() {
   const [values, setValues] = useState<Record<string, number | boolean | string>>({})
   const [savedMatch, setSavedMatch] = useState<MatchEntry | null>(null)
   const [saving, setSaving] = useState(false)
+  const [autofilled, setAutofilled] = useState(false)
+  const eventMatches = useEventStore((s) => s.matches)
 
   const phases = Array.from(new Set(config.fields.map((f) => f.phase)))
+
+  // Autocompleta aliados y puntaje desde el cronograma oficial sincronizado
+  // (TBA/FTCScout), en cuanto # Partido + # Equipo coinciden con un partido
+  // real — nunca pisa un valor que el scout ya haya escrito a mano.
+  useEffect(() => {
+    const result = findMatchAutofill(eventMatches, matchNumber, teamNumber)
+    if (!result) {
+      setAutofilled(false)
+      return
+    }
+    const allyIds = config.fields.filter((f) => f.type === 'number' && f.autofill === 'ally').map((f) => f.id)
+    const scoreIds = config.fields.filter((f) => f.type === 'number' && f.autofill === 'score').map((f) => f.id)
+
+    setValues((prev) => {
+      const next = { ...prev }
+      let changed = false
+      allyIds.forEach((id, i) => {
+        if (next[id] === undefined && result.allies[i] !== undefined) {
+          next[id] = result.allies[i]
+          changed = true
+        }
+      })
+      if (result.score !== null) {
+        scoreIds.forEach((id) => {
+          if (next[id] === undefined) {
+            next[id] = result.score as number
+            changed = true
+          }
+        })
+      }
+      if (changed) setAutofilled(true)
+      return changed ? next : prev
+    })
+  }, [matchNumber, teamNumber, eventMatches, config.fields])
 
   async function handleSave() {
     // guarda contra doble-tap: dos clics rápidos guardaban el partido dos veces
@@ -75,6 +113,12 @@ export function MatchForm() {
       </div>
 
       <TeamPicker value={teamNumber} onPick={setTeamNumber} />
+
+      {autofilled && (
+        <p className="text-xs font-bold text-emerald-400">
+          🔗 Aliados y puntaje autocompletados desde el partido oficial sincronizado.
+        </p>
+      )}
 
       {phases.map((phase) => (
         <section key={phase} className="space-y-4">

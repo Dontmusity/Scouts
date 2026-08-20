@@ -27,3 +27,13 @@ export interface EventRanking {
   wins: number
   losses: number
 }
+
+/** Partido oficial del cronograma del evento — usado para autocompletar aliados y puntaje. */
+export interface EventMatch {
+  matchNumber: number
+  red: number[]
+  blue: number[]
+  /** null hasta que el partido se jugó/publicó el resultado. */
+  redScore: number | null
+  blueScore: number | null
+}

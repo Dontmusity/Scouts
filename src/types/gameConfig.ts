@@ -62,6 +62,14 @@ export interface NumberField extends BaseField {
    * Actívalo solo en campos que sí sean una métrica de desempeño (puntaje).
    */
   countInStats?: boolean
+  /**
+   * Autocompletar este campo desde el cronograma oficial del evento
+   * sincronizado, cuando # Partido y # Equipo coinciden con un partido real:
+   * 'ally' → siguiente compañero de alianza (en orden, uno por campo);
+   * 'score' → puntaje final oficial de la alianza (solo si ya se jugó).
+   * Nunca sobreescribe un valor que el scout ya haya escrito a mano.
+   */
+  autofill?: 'ally' | 'score'
 }
 
 export type GameField =

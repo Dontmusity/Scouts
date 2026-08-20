@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { EventTeam, EventRanking } from '../types/tba'
-import { fetchTbaTeams, fetchTbaRankings } from '../lib/tbaApi'
-import { fetchFtcEventTeams, fetchFtcEventRankings } from '../lib/ftcScoutApi'
+import type { EventTeam, EventRanking, EventMatch } from '../types/tba'
+import { fetchTbaTeams, fetchTbaRankings, fetchTbaMatches } from '../lib/tbaApi'
+import { fetchFtcEventTeams, fetchFtcEventRankings, fetchFtcEventMatches } from '../lib/ftcScoutApi'
 
 // fetch() rechaza con un TypeError genérico ("Failed to fetch" / "NetworkError…")
 // cuando no hay conexión — sin esto, ese texto en inglés se mostraba tal cual.
@@ -18,6 +18,7 @@ interface EventState {
   ftcEventCode: string
   teams: EventTeam[]
   rankings: EventRanking[]
+  matches: EventMatch[]
   lastSyncedAt: number | null
   syncing: boolean
   error: string | null
@@ -38,6 +39,7 @@ export const useEventStore = create<EventState>()(
       ftcEventCode: '',
       teams: [],
       rankings: [],
+      matches: [],
       lastSyncedAt: null,
       syncing: false,
       error: null,
@@ -52,11 +54,12 @@ export const useEventStore = create<EventState>()(
         if (!tbaApiKey || !tbaEventKey) return
         set({ syncing: true, error: null })
         try {
-          const [teams, rankings] = await Promise.all([
+          const [teams, rankings, matches] = await Promise.all([
             fetchTbaTeams(tbaEventKey, tbaApiKey),
             fetchTbaRankings(tbaEventKey, tbaApiKey).catch(() => []),
+            fetchTbaMatches(tbaEventKey, tbaApiKey).catch(() => []),
           ])
-          set({ teams, rankings, lastSyncedAt: Date.now(), syncing: false })
+          set({ teams, rankings, matches, lastSyncedAt: Date.now(), syncing: false })
         } catch (e) {
           set({ error: friendlyError(e), syncing: false })
         }
@@ -67,11 +70,12 @@ export const useEventStore = create<EventState>()(
         if (!ftcEventCode) return
         set({ syncing: true, error: null })
         try {
-          const [teams, rankings] = await Promise.all([
+          const [teams, rankings, matches] = await Promise.all([
             fetchFtcEventTeams(ftcSeason, ftcEventCode),
             fetchFtcEventRankings(ftcSeason, ftcEventCode).catch(() => []),
+            fetchFtcEventMatches(ftcSeason, ftcEventCode).catch(() => []),
           ])
-          set({ teams, rankings, lastSyncedAt: Date.now(), syncing: false })
+          set({ teams, rankings, matches, lastSyncedAt: Date.now(), syncing: false })
         } catch (e) {
           set({ error: friendlyError(e), syncing: false })
         }

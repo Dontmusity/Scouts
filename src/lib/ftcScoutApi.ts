@@ -1,4 +1,4 @@
-import type { EventTeam, EventRanking } from '../types/tba'
+import type { EventTeam, EventRanking, EventMatch } from '../types/tba'
 
 const ENDPOINT = 'https://api.ftcscout.org/graphql'
 
@@ -43,6 +43,32 @@ interface EventRankingsResponse {
   eventByCode: {
     teams: { team: { number: number }; stats: { rank: number; wins: number; losses: number } | null }[]
   } | null
+}
+
+interface EventMatchesResponse {
+  eventByCode: {
+    matches: {
+      matchNum: number
+      teams: { teamNumber: number; alliance: 'Red' | 'Blue' }[]
+      scores: { red: { totalPoints: number } | null; blue: { totalPoints: number } | null } | null
+    }[]
+  } | null
+}
+
+export async function fetchFtcEventMatches(season: number, code: string): Promise<EventMatch[]> {
+  assertSeason(season)
+  const data = await ftcQuery<EventMatchesResponse>(
+    `query($season: Int!, $code: String!){ eventByCode(season: $season, code: $code) { matches { matchNum teams { teamNumber alliance } scores { ... on MatchScores${season} { red { totalPoints } blue { totalPoints } } } } } }`,
+    { season, code: code.trim() },
+  )
+  if (!data.eventByCode) throw new Error('Evento no encontrado en FTCScout')
+  return data.eventByCode.matches.map((m) => ({
+    matchNumber: m.matchNum,
+    red: m.teams.filter((t) => t.alliance === 'Red').map((t) => t.teamNumber),
+    blue: m.teams.filter((t) => t.alliance === 'Blue').map((t) => t.teamNumber),
+    redScore: m.scores?.red?.totalPoints ?? null,
+    blueScore: m.scores?.blue?.totalPoints ?? null,
+  }))
 }
 
 export async function fetchFtcEventRankings(season: number, code: string): Promise<EventRanking[]> {

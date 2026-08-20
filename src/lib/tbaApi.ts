@@ -1,4 +1,16 @@
-import type { TbaTeam, TbaRanking, TbaAlliance, EventTeam, EventRanking } from '../types/tba'
+import type { TbaTeam, TbaRanking, TbaAlliance, EventTeam, EventRanking, EventMatch } from '../types/tba'
+
+interface TbaMatchAlliance {
+  team_keys: string[]
+  /** -1 o null si el partido no se ha jugado. */
+  score: number | null
+}
+
+interface TbaMatch {
+  comp_level: string
+  match_number: number
+  alliances: { red: TbaMatchAlliance; blue: TbaMatchAlliance }
+}
 
 const BASE = 'https://www.thebluealliance.com/api/v3'
 
@@ -23,6 +35,21 @@ export async function fetchTbaRankings(eventKey: string, apiKey: string): Promis
     wins: r.record?.wins ?? 0,
     losses: r.record?.losses ?? 0,
   }))
+}
+
+export async function fetchTbaMatches(eventKey: string, apiKey: string): Promise<EventMatch[]> {
+  const matches = await tbaGet<TbaMatch[]>(`/event/${eventKey}/matches/simple`, apiKey)
+  const toTeams = (a: TbaMatchAlliance) => a.team_keys.map((k) => Number(k.replace('frc', '')))
+  const toScore = (a: TbaMatchAlliance) => (a.score !== null && a.score >= 0 ? a.score : null)
+  return matches
+    .filter((m) => m.comp_level === 'qm') // solo calificación: los ids de playoffs no coinciden con lo que el scout escribe
+    .map((m) => ({
+      matchNumber: m.match_number,
+      red: toTeams(m.alliances.red),
+      blue: toTeams(m.alliances.blue),
+      redScore: toScore(m.alliances.red),
+      blueScore: toScore(m.alliances.blue),
+    }))
 }
 
 export async function fetchTbaAlliances(eventKey: string, apiKey: string): Promise<string[][]> {

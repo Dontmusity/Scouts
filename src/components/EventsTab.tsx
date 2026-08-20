@@ -9,7 +9,7 @@ export function EventsTab() {
   const {
     tbaApiKey, tbaEventKey, setTbaApiKey, setTbaEventKey, syncFrc,
     ftcSeason, ftcEventCode, setFtcSeason, setFtcEventCode, syncFtc,
-    teams, rankings, syncing, error, lastSyncedAt,
+    teams, rankings, matches, syncing, error, lastSyncedAt,
   } = useEventStore()
 
   return (
@@ -55,7 +55,10 @@ export function EventsTab() {
 
       {error && <p className="text-sm font-bold text-red-400">{error}</p>}
       {lastSyncedAt && (
-        <p className="text-xs text-slate-500">Última sincronización: {new Date(lastSyncedAt).toLocaleString()}</p>
+        <p className="text-xs text-slate-500">
+          Última sincronización: {new Date(lastSyncedAt).toLocaleString()}
+          {matches.length > 0 && ` · ${matches.length} partidos del cronograma (autocompletan aliados y puntaje)`}
+        </p>
       )}
 
       {teams.length > 0 && (

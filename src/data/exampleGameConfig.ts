@@ -11,8 +11,8 @@ export const exampleGameConfig: GameConfig = {
   mode: 'FRC',
   fields: [
     // Inicio: con qué otros equipos estaba la alianza
-    { id: 'allyTeam1', label: 'Aliado 1 (# de equipo)', type: 'number', phase: 'prematch', suggestTeams: true },
-    { id: 'allyTeam2', label: 'Aliado 2 (# de equipo)', type: 'number', phase: 'prematch', suggestTeams: true },
+    { id: 'allyTeam1', label: 'Aliado 1 (# de equipo)', type: 'number', phase: 'prematch', suggestTeams: true, autofill: 'ally' },
+    { id: 'allyTeam2', label: 'Aliado 2 (# de equipo)', type: 'number', phase: 'prematch', suggestTeams: true, autofill: 'ally' },
 
     // Autónomo
     { id: 'startPosition', label: 'Posición inicial', type: 'dropdown', phase: 'auto', options: ['Izquierda', 'Centro', 'Derecha'] },
@@ -27,7 +27,7 @@ export const exampleGameConfig: GameConfig = {
 
     // Endgame
     { id: 'endgameClimb', label: 'Resultado de Endgame', type: 'dropdown', phase: 'endgame', options: ['Ninguno', 'Parqueado', 'Colgado - Bajo', 'Colgado - Alto'] },
-    { id: 'allianceScore', label: 'Puntaje final de la alianza', type: 'number', phase: 'endgame', countInStats: true },
+    { id: 'allianceScore', label: 'Puntaje final de la alianza', type: 'number', phase: 'endgame', countInStats: true, autofill: 'score' },
 
     // Subjetivo
     { id: 'driverSkill', label: 'Habilidad del piloto', type: 'rating', phase: 'subjective', max: 5 },
