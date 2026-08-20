@@ -16,12 +16,12 @@ export async function fetchTbaTeams(eventKey: string, apiKey: string): Promise<E
 }
 
 export async function fetchTbaRankings(eventKey: string, apiKey: string): Promise<EventRanking[]> {
-  const data = await tbaGet<{ rankings: TbaRanking[] | null }>(`/event/${eventKey}/rankings`, apiKey)
-  return (data.rankings ?? []).map((r) => ({
+  const data = await tbaGet<{ rankings: TbaRanking[] | null } | null>(`/event/${eventKey}/rankings`, apiKey)
+  return (data?.rankings ?? []).map((r) => ({
     rank: r.rank,
     teamNumber: Number(r.team_key.replace('frc', '')),
-    wins: r.wins,
-    losses: r.losses,
+    wins: r.record?.wins ?? 0,
+    losses: r.record?.losses ?? 0,
   }))
 }
 

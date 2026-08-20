@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useScoutStore } from '../store/useScoutStore'
-import { useEventStore } from '../store/useEventStore'
 import { FieldRenderer } from './FieldRenderer'
+import { TeamPicker } from './TeamPicker'
 import { QrCode } from './QrCode'
 import { compressMatch } from '../lib/qr'
 import type { GameField } from '../types/gameConfig'
@@ -18,7 +18,6 @@ const phaseLabel: Record<GameField['phase'], string> = {
 
 export function MatchForm() {
   const { config, addMatch } = useScoutStore()
-  const eventTeams = useEventStore((s) => s.teams)
   const [matchNumber, setMatchNumber] = useState('')
   const [teamNumber, setTeamNumber] = useState('')
   const [scoutName, setScoutName] = useState('')
@@ -48,16 +47,6 @@ export function MatchForm() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-4 pb-24 text-left">
-      {/* Lista de equipos del evento (sincronizada en Eventos): autocompleta
-          el # de equipo y los campos de aliados con sugerencias nativas. */}
-      <datalist id="event-teams">
-        {eventTeams.map((t) => (
-          <option key={t.teamNumber} value={t.teamNumber}>
-            {t.name}
-          </option>
-        ))}
-      </datalist>
-
       <div className="grid grid-cols-3 gap-3">
         <input
           className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-white"
@@ -70,7 +59,6 @@ export function MatchForm() {
           className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-white"
           placeholder="# Equipo"
           inputMode="numeric"
-          list="event-teams"
           value={teamNumber}
           onChange={(e) => setTeamNumber(e.target.value)}
         />
@@ -81,6 +69,8 @@ export function MatchForm() {
           onChange={(e) => setScoutName(e.target.value)}
         />
       </div>
+
+      <TeamPicker value={teamNumber} onPick={setTeamNumber} />
 
       {phases.map((phase) => (
         <section key={phase} className="space-y-4">

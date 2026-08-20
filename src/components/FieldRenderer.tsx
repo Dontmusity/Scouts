@@ -1,4 +1,5 @@
 import type { GameField } from '../types/gameConfig'
+import { TeamPicker } from './TeamPicker'
 
 type Value = number | boolean | string
 
@@ -122,17 +123,19 @@ export function FieldRenderer({ field, value, onChange }: Props) {
     case 'number': {
       const s = typeof value === 'number' ? String(value) : ''
       return (
-        <input
-          type="number"
-          inputMode="numeric"
-          list={field.suggestTeams ? 'event-teams' : undefined}
-          className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3 text-lg text-white"
-          value={s}
-          onChange={(e) => {
-            const n = e.target.valueAsNumber
-            onChange(Number.isFinite(n) ? n : '')
-          }}
-        />
+        <>
+          <input
+            type="number"
+            inputMode="numeric"
+            className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3 text-lg text-white"
+            value={s}
+            onChange={(e) => {
+              const n = e.target.valueAsNumber
+              onChange(Number.isFinite(n) ? n : '')
+            }}
+          />
+          {field.suggestTeams && <TeamPicker value={s} onPick={(n) => onChange(Number(n))} />}
+        </>
       )
     }
   }

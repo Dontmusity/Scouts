@@ -7,9 +7,8 @@ export interface TbaTeam {
 export interface TbaRanking {
   rank: number
   team_key: string
-  wins: number
-  losses: number
-  ties: number
+  /** TBA anida el récord aquí; puede venir null si el evento aún no juega. */
+  record: { wins: number; losses: number; ties: number } | null
 }
 
 export interface TbaAlliance {

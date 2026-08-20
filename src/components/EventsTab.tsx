@@ -18,6 +18,18 @@ export function EventsTab() {
         <div className="space-y-2">
           <label className="block text-sm text-slate-300">TBA API Key (Read)</label>
           <input className={input} value={tbaApiKey} onChange={(e) => setTbaApiKey(e.target.value)} placeholder="X-TBA-Auth-Key" />
+          <p className="text-xs text-slate-500">
+            Se obtiene gratis en{' '}
+            <a
+              className="text-sky-400 underline"
+              href="https://www.thebluealliance.com/account"
+              target="_blank"
+              rel="noreferrer"
+            >
+              thebluealliance.com/account
+            </a>{' '}
+            → &quot;Read API Keys&quot;. Se guarda solo en este dispositivo.
+          </p>
           <label className="block text-sm text-slate-300">Event key</label>
           <input className={input} value={tbaEventKey} onChange={(e) => setTbaEventKey(e.target.value)} placeholder="p.ej. 2026mimi" />
           <button className={btn} disabled={syncing || !tbaApiKey || !tbaEventKey} onClick={syncFrc}>
