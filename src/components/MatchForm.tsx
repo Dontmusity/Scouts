@@ -133,6 +133,16 @@ export function MatchForm() {
         </p>
       )}
 
+      {/* Sin esto, el autocompletado simplemente no pasaba y el scout no tenía
+          forma de saber si era un dato mal escrito o un evento sin sincronizar. */}
+      {!autofilled && matchNumber.trim() && teamNumber.trim() && (
+        <p className="text-xs text-slate-500">
+          {eventMatches.length === 0
+            ? 'ℹ️ Sin cronograma sincronizado — sincroniza el evento en la pestaña Eventos para autocompletar aliados y puntaje.'
+            : `ℹ️ El Partido ${matchNumber.trim()} con el Equipo ${teamNumber.trim()} no está en el cronograma sincronizado (${eventMatches.length} partidos de calificación). Revisa los números o vuelve a sincronizar.`}
+        </p>
+      )}
+
       {phases.map((phase) => (
         <section key={phase} className="space-y-4">
           <h2 className="text-sm font-bold uppercase tracking-wide text-sky-400">{phaseLabel[phase]}</h2>

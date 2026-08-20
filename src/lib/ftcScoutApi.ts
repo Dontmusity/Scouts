@@ -10,7 +10,17 @@ async function ftcQuery<T>(query: string, variables: Record<string, unknown>): P
   })
   if (!res.ok) throw new Error(`FTCScout ${res.status}`)
   const json = await res.json()
-  if (json.errors) throw new Error(json.errors[0]?.message ?? 'FTCScout query error')
+  if (json.errors) {
+    const msg: string = json.errors[0]?.message ?? 'FTCScout query error'
+    // El schema tiene un tipo por temporada (MatchScores2025, TeamEventStats2025…).
+    // Para una temporada que FTCScout todavía no publica, el error crudo es
+    // "Unknown type" — intraducible para un scout en la arena.
+    if (/Unknown type|Cannot query field/i.test(msg)) {
+      const season = variables.season
+      throw new Error(`FTCScout aún no tiene datos de la temporada ${season}. Prueba con la temporada anterior.`)
+    }
+    throw new Error(msg)
+  }
   return json.data
 }
 

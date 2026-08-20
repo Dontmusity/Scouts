@@ -9,7 +9,7 @@ export function EventsTab() {
   const {
     tbaApiKey, tbaEventKey, setTbaApiKey, setTbaEventKey, syncFrc,
     ftcSeason, ftcEventCode, setFtcSeason, setFtcEventCode, syncFtc,
-    teams, rankings, matches, syncing, error, lastSyncedAt,
+    teams, rankings, matches, syncing, error, scheduleError, lastSyncedAt,
   } = useEventStore()
 
   return (
@@ -54,6 +54,18 @@ export function EventsTab() {
       )}
 
       {error && <p className="text-sm font-bold text-red-400">{error}</p>}
+
+      {scheduleError && (
+        <p className="rounded-lg bg-amber-950 p-3 text-sm font-bold text-amber-300">⚠️ {scheduleError}</p>
+      )}
+
+      {lastSyncedAt && !scheduleError && matches.length === 0 && (
+        <p className="rounded-lg bg-amber-950 p-3 text-sm font-bold text-amber-300">
+          ⚠️ El evento sincronizó, pero todavía no hay cronograma de partidos publicado. El autocompletado de aliados y
+          puntaje empezará a funcionar cuando lo publiquen (vuelve a sincronizar).
+        </p>
+      )}
+
       {lastSyncedAt && (
         <p className="text-xs text-slate-500">
           Última sincronización: {new Date(lastSyncedAt).toLocaleString()}

@@ -11,6 +11,13 @@ function friendlyError(e: unknown): string {
   return e instanceof Error ? e.message : 'Error de sincronización'
 }
 
+/** El cronograma es opcional: si falla, se reporta sin tumbar el resto del sync. */
+const ok = (matches: EventMatch[]) => ({ matches, scheduleError: null })
+const fail = (e: unknown) => ({
+  matches: [] as EventMatch[],
+  scheduleError: `No se pudo cargar el cronograma: ${friendlyError(e)} El autocompletado de aliados y puntaje no funcionará.`,
+})
+
 interface EventState {
   tbaApiKey: string
   tbaEventKey: string
@@ -22,6 +29,12 @@ interface EventState {
   lastSyncedAt: number | null
   syncing: boolean
   error: string | null
+  /**
+   * Falla del cronograma en particular. Se separa de `error` porque equipos y
+   * rankings pueden bajar bien mientras el cronograma falla — antes eso se
+   * tragaba en silencio y el autocompletado quedaba muerto sin explicación.
+   */
+  scheduleError: string | null
   setTbaApiKey: (key: string) => void
   setTbaEventKey: (key: string) => void
   setFtcSeason: (season: number) => void
@@ -43,6 +56,7 @@ export const useEventStore = create<EventState>()(
       lastSyncedAt: null,
       syncing: false,
       error: null,
+      scheduleError: null,
 
       setTbaApiKey: (tbaApiKey) => set({ tbaApiKey }),
       setTbaEventKey: (tbaEventKey) => set({ tbaEventKey }),
@@ -52,14 +66,14 @@ export const useEventStore = create<EventState>()(
       syncFrc: async () => {
         const { tbaApiKey, tbaEventKey } = get()
         if (!tbaApiKey || !tbaEventKey) return
-        set({ syncing: true, error: null })
+        set({ syncing: true, error: null, scheduleError: null })
         try {
-          const [teams, rankings, matches] = await Promise.all([
+          const [teams, rankings, schedule] = await Promise.all([
             fetchTbaTeams(tbaEventKey, tbaApiKey),
             fetchTbaRankings(tbaEventKey, tbaApiKey).catch(() => []),
-            fetchTbaMatches(tbaEventKey, tbaApiKey).catch(() => []),
+            fetchTbaMatches(tbaEventKey, tbaApiKey).then(ok, fail),
           ])
-          set({ teams, rankings, matches, lastSyncedAt: Date.now(), syncing: false })
+          set({ teams, rankings, ...schedule, lastSyncedAt: Date.now(), syncing: false })
         } catch (e) {
           set({ error: friendlyError(e), syncing: false })
         }
@@ -68,14 +82,14 @@ export const useEventStore = create<EventState>()(
       syncFtc: async () => {
         const { ftcSeason, ftcEventCode } = get()
         if (!ftcEventCode) return
-        set({ syncing: true, error: null })
+        set({ syncing: true, error: null, scheduleError: null })
         try {
-          const [teams, rankings, matches] = await Promise.all([
+          const [teams, rankings, schedule] = await Promise.all([
             fetchFtcEventTeams(ftcSeason, ftcEventCode),
             fetchFtcEventRankings(ftcSeason, ftcEventCode).catch(() => []),
-            fetchFtcEventMatches(ftcSeason, ftcEventCode).catch(() => []),
+            fetchFtcEventMatches(ftcSeason, ftcEventCode).then(ok, fail),
           ])
-          set({ teams, rankings, matches, lastSyncedAt: Date.now(), syncing: false })
+          set({ teams, rankings, ...schedule, lastSyncedAt: Date.now(), syncing: false })
         } catch (e) {
           set({ error: friendlyError(e), syncing: false })
         }
