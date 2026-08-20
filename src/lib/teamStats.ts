@@ -17,7 +17,11 @@ export interface TeamStat {
 const numericTypes: GameField['type'][] = ['counter', 'rating', 'toggle']
 
 export function computeTeamStats(matches: MatchEntry[], fields: GameField[]): TeamStat[] {
-  const numericFields = fields.filter((f) => numericTypes.includes(f.type))
+  // "number" solo cuenta si se marcó countInStats: la mayoría son
+  // identificadores (equipos aliados), no puntaje.
+  const numericFields = fields.filter(
+    (f) => numericTypes.includes(f.type) || (f.type === 'number' && f.countInStats),
+  )
   const byTeam = new Map<string, MatchEntry[]>()
   for (const m of matches) {
     const list = byTeam.get(m.teamNumber) ?? []

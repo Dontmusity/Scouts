@@ -1,29 +1,28 @@
 import { useEffect, useState } from 'react'
 import type { TeamStat } from '../../lib/teamStats'
+import { usePicklistStore } from '../../store/usePicklistStore'
 
 export function Picklist({ stats }: { stats: TeamStat[] }) {
-  const [order, setOrder] = useState<string[]>([])
+  const { order, setOrder } = usePicklistStore()
   const [dragIndex, setDragIndex] = useState<number | null>(null)
 
   useEffect(() => {
-    setOrder((prev) => {
-      const known = new Set(prev)
-      const newTeams = stats.map((s) => s.teamNumber).filter((t) => !known.has(t))
-      const stillPresent = prev.filter((t) => stats.some((s) => s.teamNumber === t))
-      return [...stillPresent, ...newTeams]
-    })
+    const known = new Set(order)
+    const newTeams = stats.map((s) => s.teamNumber).filter((t) => !known.has(t))
+    const stillPresent = order.filter((t) => stats.some((s) => s.teamNumber === t))
+    const next = [...stillPresent, ...newTeams]
+    if (next.length !== order.length || next.some((t, i) => t !== order[i])) setOrder(next)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo reconciliar cuando cambian los equipos, no en cada reorden manual
   }, [stats])
 
   const byTeam = new Map(stats.map((s) => [s.teamNumber, s]))
 
   function handleDrop(targetIndex: number) {
     if (dragIndex === null || dragIndex === targetIndex) return
-    setOrder((prev) => {
-      const next = [...prev]
-      const [moved] = next.splice(dragIndex, 1)
-      next.splice(targetIndex, 0, moved)
-      return next
-    })
+    const next = [...order]
+    const [moved] = next.splice(dragIndex, 1)
+    next.splice(targetIndex, 0, moved)
+    setOrder(next)
     setDragIndex(null)
   }
 

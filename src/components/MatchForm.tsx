@@ -23,11 +23,14 @@ export function MatchForm() {
   const [scoutName, setScoutName] = useState('')
   const [values, setValues] = useState<Record<string, number | boolean | string>>({})
   const [savedMatch, setSavedMatch] = useState<MatchEntry | null>(null)
+  const [saving, setSaving] = useState(false)
 
   const phases = Array.from(new Set(config.fields.map((f) => f.phase)))
 
   async function handleSave() {
-    if (!matchNumber.trim() || !teamNumber.trim()) return
+    // guarda contra doble-tap: dos clics rápidos guardaban el partido dos veces
+    if (saving || !matchNumber.trim() || !teamNumber.trim()) return
+    setSaving(true)
     const entry: MatchEntry = {
       id: crypto.randomUUID(),
       gameId: config.gameId,
@@ -43,10 +46,11 @@ export function MatchForm() {
     setMatchNumber('')
     setTeamNumber('')
     setSavedMatch(entry)
+    setSaving(false)
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 p-4 pb-24 text-left">
+    <div className="mx-auto max-w-2xl space-y-6 p-4 pb-8 text-left">
       <div className="grid grid-cols-3 gap-3">
         <input
           className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-white"
@@ -90,9 +94,11 @@ export function MatchForm() {
         </section>
       ))}
 
+      {/* En el flujo normal (no "fixed"): un botón flotante sobre el campo
+          tipo fieldMap le tapaba los taps en pantallas cortas (iPhone SE). */}
       <button
-        className="fixed bottom-20 left-1/2 w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 rounded-xl bg-emerald-600 py-4 text-xl font-bold text-white shadow-lg disabled:opacity-40"
-        disabled={!matchNumber.trim() || !teamNumber.trim()}
+        className="w-full rounded-xl bg-emerald-600 py-4 text-xl font-bold text-white shadow-lg disabled:opacity-40"
+        disabled={saving || !matchNumber.trim() || !teamNumber.trim()}
         onClick={handleSave}
       >
         Guardar partido

@@ -3,14 +3,40 @@ import { useScoutStore } from '../store/useScoutStore'
 import { validateGameConfig, type GameConfig } from '../types/gameConfig'
 
 export function ConfigEditor() {
-  const { config, setConfig } = useScoutStore()
+  const { config, matches, setConfig } = useScoutStore()
   const [text, setText] = useState(() => JSON.stringify(config, null, 2))
   const [error, setError] = useState<string | null>(null)
 
+  /**
+   * Un gameId nuevo, o un field id que ya no existe, no borra los partidos
+   * guardados — pero deja de mostrarlos (por gameId) o los muestra en 0 (por
+   * field id), y a mitad de un evento eso parece pérdida de datos. Avisamos
+   * antes de aplicar.
+   */
+  function confirmIfHidesData(next: GameConfig): boolean {
+    if (matches.length === 0) return true
+    if (next.gameId !== config.gameId) {
+      return window.confirm(
+        `Este config usa un "gameId" distinto. Los ${matches.length} partidos guardados quedarán ocultos (no se borran) hasta volver al gameId anterior. ¿Continuar?`,
+      )
+    }
+    const nextIds = new Set(next.fields.map((f) => f.id))
+    const orphaned = config.fields.filter((f) => !nextIds.has(f.id) && matches.some((m) => f.id in m.values))
+    if (orphaned.length > 0) {
+      return window.confirm(
+        `Estos campos ya tienen datos guardados y no están en el nuevo config: ${orphaned.map((f) => f.label).join(', ')}. Sus valores quedarán invisibles (se verán en 0) en los partidos ya guardados. ¿Continuar?`,
+      )
+    }
+    return true
+  }
+
   function handleApply() {
     try {
-      setConfig(validateGameConfig(JSON.parse(text)))
-      setError(null)
+      const next = validateGameConfig(JSON.parse(text))
+      if (confirmIfHidesData(next)) {
+        setConfig(next)
+        setError(null)
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'JSON inválido')
     }
@@ -21,10 +47,12 @@ export function ConfigEditor() {
     // aplicado — así el toggle no destruye ediciones sin guardar.
     try {
       const draft = JSON.parse(text) as GameConfig
-      const next = { ...draft, mode }
-      setText(JSON.stringify(next, null, 2))
-      setConfig(validateGameConfig(next))
-      setError(null)
+      const next = validateGameConfig({ ...draft, mode })
+      if (confirmIfHidesData(next)) {
+        setText(JSON.stringify(next, null, 2))
+        setConfig(next)
+        setError(null)
+      }
     } catch {
       setError('El JSON del borrador no es válido; corrígelo antes de cambiar el modo.')
     }

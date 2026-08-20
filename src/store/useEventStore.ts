@@ -4,6 +4,13 @@ import type { EventTeam, EventRanking } from '../types/tba'
 import { fetchTbaTeams, fetchTbaRankings } from '../lib/tbaApi'
 import { fetchFtcEventTeams, fetchFtcEventRankings } from '../lib/ftcScoutApi'
 
+// fetch() rechaza con un TypeError genérico ("Failed to fetch" / "NetworkError…")
+// cuando no hay conexión — sin esto, ese texto en inglés se mostraba tal cual.
+function friendlyError(e: unknown): string {
+  if (e instanceof TypeError) return 'Sin conexión — revisa tu red e intenta de nuevo.'
+  return e instanceof Error ? e.message : 'Error de sincronización'
+}
+
 interface EventState {
   tbaApiKey: string
   tbaEventKey: string
@@ -51,7 +58,7 @@ export const useEventStore = create<EventState>()(
           ])
           set({ teams, rankings, lastSyncedAt: Date.now(), syncing: false })
         } catch (e) {
-          set({ error: e instanceof Error ? e.message : 'Error de sincronización', syncing: false })
+          set({ error: friendlyError(e), syncing: false })
         }
       },
 
@@ -66,7 +73,7 @@ export const useEventStore = create<EventState>()(
           ])
           set({ teams, rankings, lastSyncedAt: Date.now(), syncing: false })
         } catch (e) {
-          set({ error: e instanceof Error ? e.message : 'Error de sincronización', syncing: false })
+          set({ error: friendlyError(e), syncing: false })
         }
       },
     }),

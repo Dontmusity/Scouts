@@ -55,6 +55,13 @@ export interface NumberField extends BaseField {
   type: 'number'
   /** Sugerir los equipos del evento sincronizado (datalist) al escribir. */
   suggestTeams?: boolean
+  /**
+   * Incluir este campo en el promedio/picklist del dashboard (teamStats).
+   * Por defecto NO: la mayoría de los campos "number" son identificadores
+   * (números de equipo aliado), no puntaje — sumarlos rompería el ranking.
+   * Actívalo solo en campos que sí sean una métrica de desempeño (puntaje).
+   */
+  countInStats?: boolean
 }
 
 export type GameField =

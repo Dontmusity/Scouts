@@ -14,7 +14,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8 p-4 text-left">
+    <div className="mx-auto max-w-2xl space-y-8 p-4 pb-16 text-left">
       <section>
         <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">Promedio por equipo</h2>
         <TeamStatsChart stats={stats} />
