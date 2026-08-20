@@ -1,17 +1,20 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { useScoutStore } from './store/useScoutStore'
+import { usePitStore } from './store/usePitStore'
 import { MatchForm } from './components/MatchForm'
 import { ConfigEditor } from './components/ConfigEditor'
 import { MatchList } from './components/MatchList'
 import { EventsTab } from './components/EventsTab'
+import { PitScouting } from './components/PitScouting'
 
 const Dashboard = lazy(() => import('./components/Dashboard/Dashboard').then((m) => ({ default: m.Dashboard })))
 
-type Tab = 'scout' | 'matches' | 'events' | 'dashboard' | 'admin'
+type Tab = 'scout' | 'matches' | 'pit' | 'events' | 'dashboard' | 'admin'
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'scout', label: 'Scouting' },
   { id: 'matches', label: 'Partidos' },
+  { id: 'pit', label: 'Pit' },
   { id: 'events', label: 'Eventos' },
   { id: 'dashboard', label: 'Análisis' },
   { id: 'admin', label: 'Admin' },
@@ -19,11 +22,16 @@ const tabs: { id: Tab; label: string }[] = [
 
 export default function App() {
   const { init, loaded, config } = useScoutStore()
+  const initPit = usePitStore((s) => s.init)
   const [tab, setTab] = useState<Tab>('scout')
 
   useEffect(() => {
     init()
   }, [init])
+
+  useEffect(() => {
+    if (loaded) initPit()
+  }, [loaded, initPit])
 
   if (!loaded) {
     return <div className="p-8 text-center text-slate-400">Cargando…</div>
@@ -41,6 +49,7 @@ export default function App() {
       <main className="pb-16">
         {tab === 'scout' && <MatchForm />}
         {tab === 'matches' && <MatchList />}
+        {tab === 'pit' && <PitScouting />}
         {tab === 'events' && <EventsTab />}
         {tab === 'dashboard' && (
           <Suspense fallback={<div className="p-8 text-center text-slate-500">Cargando análisis…</div>}>

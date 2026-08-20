@@ -19,7 +19,7 @@ const phaseLabel: Record<GameField['phase'], string> = {
 }
 
 export function MatchForm() {
-  const { config, addMatch } = useScoutStore()
+  const { config, matches, addMatch } = useScoutStore()
   const [matchNumber, setMatchNumber] = useState('')
   const [teamNumber, setTeamNumber] = useState('')
   const [scoutName, setScoutName] = useState('')
@@ -29,7 +29,9 @@ export function MatchForm() {
   const [autofilled, setAutofilled] = useState(false)
   const eventMatches = useEventStore((s) => s.matches)
 
-  const phases = Array.from(new Set(config.fields.map((f) => f.phase)))
+  // 'pit' vive en su propia pestaña (un reporte por equipo por temporada, no
+  // por partido) — no debe aparecer también aquí en el formulario de partido.
+  const phases = Array.from(new Set(config.fields.map((f) => f.phase))).filter((p) => p !== 'pit')
 
   // Autocompleta aliados y puntaje desde el cronograma oficial sincronizado
   // (TBA/FTCScout), en cuanto # Partido + # Equipo coinciden con un partido
@@ -68,6 +70,17 @@ export function MatchForm() {
   async function handleSave() {
     // guarda contra doble-tap: dos clics rápidos guardaban el partido dos veces
     if (saving || !matchNumber.trim() || !teamNumber.trim()) return
+    // Sin backend en vivo no podemos bloquear un duplicado, solo avisar antes de guardarlo.
+    const dup = matches.find(
+      (m) => m.matchNumber === matchNumber.trim() && m.teamNumber === teamNumber.trim(),
+    )
+    if (dup) {
+      const who = dup.scoutName ? `el scout "${dup.scoutName}"` : 'otro scout'
+      const proceed = window.confirm(
+        `Ya existe un registro del Partido ${dup.matchNumber} · Equipo ${dup.teamNumber} (cargado por ${who}). ¿Guardar de todas formas?`,
+      )
+      if (!proceed) return
+    }
     setSaving(true)
     const entry: MatchEntry = {
       id: crypto.randomUUID(),

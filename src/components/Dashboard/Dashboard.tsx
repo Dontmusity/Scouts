@@ -21,7 +21,9 @@ export function Dashboard() {
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">PickList (arrastra para reordenar)</h2>
+        <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">
+          PickList (arrastra en desktop o usa el selector en el celular)
+        </h2>
         <Picklist stats={stats} />
       </section>
 

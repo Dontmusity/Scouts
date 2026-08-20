@@ -120,6 +120,26 @@ export function FieldRenderer({ field, value, onChange }: Props) {
       )
     }
 
+    case 'tags': {
+      const selected = typeof value === 'string' && value ? value.split(',').filter(Boolean) : []
+      return (
+        <div className="flex flex-wrap gap-2">
+          {(field.options ?? []).map((opt) => {
+            const on = selected.includes(opt)
+            return (
+              <button
+                key={opt}
+                className={`${btn} ${on ? 'bg-sky-600 text-white' : 'bg-slate-700 text-slate-300'}`}
+                onClick={() => onChange((on ? selected.filter((o) => o !== opt) : [...selected, opt]).join(','))}
+              >
+                {opt}
+              </button>
+            )
+          })}
+        </div>
+      )
+    }
+
     case 'number': {
       const s = typeof value === 'number' ? String(value) : ''
       return (

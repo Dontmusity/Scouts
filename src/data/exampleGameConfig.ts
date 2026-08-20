@@ -32,6 +32,19 @@ export const exampleGameConfig: GameConfig = {
     // Subjetivo
     { id: 'driverSkill', label: 'Habilidad del piloto', type: 'rating', phase: 'subjective', max: 5 },
     { id: 'robotSpeed', label: 'Velocidad del robot', type: 'rating', phase: 'subjective', max: 5 },
+    {
+      id: 'tags',
+      label: 'Etiquetas rápidas',
+      type: 'tags',
+      phase: 'subjective',
+      options: ['Rápido', 'Preciso', 'Buen piloto', 'Juega defensa', 'Se voltea/inestable', 'Se descompuso', 'Inconsistente'],
+    },
     { id: 'notes', label: 'Notas', type: 'text', phase: 'subjective' },
+
+    // Pit: qué parece capaz de hacer el robot, visto en el pit
+    { id: 'drivetrainType', label: 'Tipo de tren motriz', type: 'dropdown', phase: 'pit', options: ['Swerve', 'Tanque', 'Mecanum', 'Otro'] },
+    { id: 'pitHasShooter', label: 'Tiene shooter', type: 'toggle', phase: 'pit' },
+    { id: 'pitCanClimb', label: 'Puede colgar (Endgame)', type: 'toggle', phase: 'pit' },
+    { id: 'pitNotes', label: 'Notas del robot', type: 'text', phase: 'pit' },
   ],
 }

@@ -6,6 +6,7 @@ export type FieldType =
   | 'fieldMap'
   | 'text'
   | 'number'
+  | 'tags'
 
 export interface BaseField {
   id: string
@@ -72,6 +73,16 @@ export interface NumberField extends BaseField {
   autofill?: 'ally' | 'score'
 }
 
+/**
+ * Chips de selección múltiple (ej. "Rápido", "Juega defensa"). El valor se
+ * guarda como un solo string separado por comas — MatchEntry.values solo
+ * admite number | boolean | string, no arreglos.
+ */
+export interface TagsField extends BaseField {
+  type: 'tags'
+  options: string[]
+}
+
 export type GameField =
   | CounterField
   | ToggleField
@@ -80,6 +91,7 @@ export type GameField =
   | FieldMapField
   | TextField
   | NumberField
+  | TagsField
 
 export interface GameConfig {
   /** e.g. "reefscape-2025" — used as the IndexedDB partition key. */
@@ -90,7 +102,7 @@ export interface GameConfig {
   fields: GameField[]
 }
 
-const FIELD_TYPES: FieldType[] = ['counter', 'toggle', 'dropdown', 'rating', 'fieldMap', 'text', 'number']
+const FIELD_TYPES: FieldType[] = ['counter', 'toggle', 'dropdown', 'rating', 'fieldMap', 'text', 'number', 'tags']
 const PHASES: BaseField['phase'][] = ['prematch', 'auto', 'teleop', 'endgame', 'pit', 'subjective']
 
 /**
@@ -119,6 +131,8 @@ export function validateGameConfig(parsed: unknown): GameConfig {
     if (!PHASES.includes(f.phase)) throw new Error(`${at}: "phase" debe ser una de: ${PHASES.join(', ')}.`)
     if (f.type === 'dropdown' && (!Array.isArray(f.options) || f.options.some((o) => typeof o !== 'string')))
       throw new Error(`${at}: un dropdown necesita "options" (arreglo de textos).`)
+    if (f.type === 'tags' && (!Array.isArray(f.options) || f.options.length === 0 || f.options.some((o) => typeof o !== 'string')))
+      throw new Error(`${at}: un tags necesita "options" (arreglo de textos, no vacío).`)
     if (f.type === 'fieldMap' && typeof f.imageUrl !== 'string')
       throw new Error(`${at}: un fieldMap necesita "imageUrl" (texto).`)
     if (f.type === 'rating' && f.max !== undefined && typeof f.max !== 'number')
