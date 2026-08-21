@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useEventStore } from '../store/useEventStore'
 import { useScoutStore } from '../store/useScoutStore'
 import { usePitStore } from '../store/usePitStore'
+import { useNexusStore } from '../store/useNexusStore'
 import { FieldRenderer } from './FieldRenderer'
 import type { PitReport } from '../lib/db'
 import type { GameField } from '../types/gameConfig'
@@ -17,6 +18,7 @@ export function PitScouting() {
   const matches = useScoutStore((s) => s.matches)
   const reports = usePitStore((s) => s.reports)
   const saveReport = usePitStore((s) => s.saveReport)
+  const pitLocations = useNexusStore((s) => s.pits)
   const [activeTeam, setActiveTeam] = useState<Team | null>(null)
 
   const teams = useMemo<Team[]>(() => {
@@ -59,6 +61,9 @@ export function PitScouting() {
             >
               <span className="text-lg font-bold text-white">{team.teamNumber}</span>
               {team.name && <span className="truncate text-xs text-slate-400">{team.name}</span>}
+              {pitLocations[team.teamNumber] && (
+                <span className="truncate text-xs font-bold text-sky-400">📍 {pitLocations[team.teamNumber]}</span>
+              )}
               <span
                 className={`mt-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
                   scouted ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-400'
@@ -74,6 +79,7 @@ export function PitScouting() {
       {activeTeam && (
         <PitForm
           team={activeTeam}
+          pitLocation={pitLocations[activeTeam.teamNumber]}
           fields={pitFields}
           existing={reportByTeam.get(activeTeam.teamNumber)}
           gameId={config.gameId}
@@ -87,6 +93,7 @@ export function PitScouting() {
 
 function PitForm({
   team,
+  pitLocation,
   fields,
   existing,
   gameId,
@@ -94,6 +101,7 @@ function PitForm({
   onClose,
 }: {
   team: Team
+  pitLocation?: string
   fields: GameField[]
   existing: PitReport | undefined
   gameId: string
@@ -126,6 +134,7 @@ function PitForm({
           <div>
             <h3 className="text-xl font-bold text-white">Equipo {team.teamNumber}</h3>
             {team.name && <p className="text-sm text-slate-400">{team.name}</p>}
+            {pitLocation && <p className="text-sm font-bold text-sky-400">📍 Pit {pitLocation}</p>}
           </div>
           <button className="rounded-lg bg-slate-700 px-3 py-2 font-bold text-white" onClick={onClose}>
             Cerrar

@@ -1,5 +1,6 @@
 import { useScoutStore } from '../store/useScoutStore'
 import { useEventStore } from '../store/useEventStore'
+import { NexusPanel } from './NexusPanel'
 
 const input = 'rounded-lg border border-slate-700 bg-slate-800 p-3 text-white w-full'
 const btn = 'rounded-xl bg-sky-600 py-3 font-bold text-white disabled:opacity-40'
@@ -87,6 +88,8 @@ export function EventsTab() {
           </ul>
         </div>
       )}
+
+      <NexusPanel />
 
       {rankings.length > 0 && (
         <div>
