@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { TeamStat } from '../../lib/teamStats'
+import { winProbability } from '../../lib/winProbability'
 
 function AllianceSelect({
   label,
@@ -39,9 +40,12 @@ export function MatchPredictor({ stats, allianceSize }: { stats: TeamStat[]; all
   const [blue, setBlue] = useState<string[]>(Array(allianceSize).fill(''))
 
   const byTeam = new Map(stats.map((s) => [s.teamNumber, s.totalAvg]))
-  const sum = (teams: string[]) => teams.reduce((acc, t) => acc + (byTeam.get(t) ?? 0), 0)
-  const redScore = sum(red)
-  const blueScore = sum(blue)
+  const byTeamVar = new Map(stats.map((s) => [s.teamNumber, s.stdDev ** 2]))
+  const sum = (teams: string[], byValue: Map<string, number>) =>
+    teams.reduce((acc, t) => acc + (byValue.get(t) ?? 0), 0)
+  const redScore = sum(red, byTeam)
+  const blueScore = sum(blue, byTeam)
+  const redWinPct = winProbability(redScore, sum(red, byTeamVar), blueScore, sum(blue, byTeamVar)) * 100
   const hasPicks = red.some(Boolean) && blue.some(Boolean)
 
   function setSlot(setter: typeof setRed, i: number, team: string) {
@@ -62,8 +66,17 @@ export function MatchPredictor({ stats, allianceSize }: { stats: TeamStat[]; all
             {' — '}
             <span className={blueScore >= redScore ? 'text-blue-400' : 'text-slate-500'}>{blueScore.toFixed(1)}</span>
           </p>
+          <div className="mx-auto mt-3 h-2 max-w-xs overflow-hidden rounded-full bg-blue-500">
+            <div className="h-full bg-red-500" style={{ width: `${redWinPct.toFixed(1)}%` }} />
+          </div>
+          <p className="mt-2 text-sm font-bold">
+            <span className="text-red-400">{redWinPct.toFixed(0)}%</span>
+            {' — '}
+            <span className="text-blue-400">{(100 - redWinPct).toFixed(0)}%</span>
+          </p>
           <p className="mt-1 text-sm text-slate-400">
-            Predicción basada en el promedio agregado de puntos escaneados por equipo.
+            Predicción basada en el promedio agregado de puntos escaneados por equipo, con probabilidad de
+            victoria a partir de la desviación estándar de cada alianza.
           </p>
         </div>
       )}
