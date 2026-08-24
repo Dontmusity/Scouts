@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import type { TeamStat } from '../../lib/teamStats'
+import type { PredictorTeam } from './MatchPredictor'
 import { usePicklistStore, type Tier } from '../../store/usePicklistStore'
 import { computeMergedTiers } from '../../lib/picklistMerge'
 
@@ -11,7 +11,7 @@ const COLUMNS: { tier: Tier; label: string }[] = [
   { tier: 'uncategorized', label: 'Sin clasificar' },
 ]
 
-export function Picklist({ stats }: { stats: TeamStat[] }) {
+export function Picklist({ teams: roster }: { teams: PredictorTeam[] }) {
   const { scoutName, setScoutName, assignments, setTierFor } = usePicklistStore()
   const [mode, setMode] = useState<'mine' | 'primary'>('mine')
   const [dragTeam, setDragTeam] = useState<string | null>(null)
@@ -77,7 +77,7 @@ export function Picklist({ stats }: { stats: TeamStat[] }) {
 
       <div ref={scrollRef} onDragOver={handleContainerDragOver} className="flex gap-3 overflow-x-auto pb-2 snap-x">
         {COLUMNS.map(({ tier, label }) => {
-          const teams = stats.filter((s) => tierOf(s.teamNumber) === tier)
+          const teams = roster.filter((t) => tierOf(t.teamNumber) === tier)
           return (
             <div
               key={tier}
@@ -89,21 +89,19 @@ export function Picklist({ stats }: { stats: TeamStat[] }) {
                 {label} <span className="text-slate-600">({teams.length})</span>
               </h3>
               <div className="space-y-2">
-                {teams.map((stat) => (
+                {teams.map((t) => (
                   <div
-                    key={stat.teamNumber}
+                    key={t.teamNumber}
                     draggable={editable}
-                    onDragStart={() => setDragTeam(stat.teamNumber)}
+                    onDragStart={() => setDragTeam(t.teamNumber)}
                     className={`rounded-lg bg-slate-800 p-3 ${
                       editable ? 'cursor-grab active:cursor-grabbing' : 'opacity-70'
                     } ${!editable && mode === 'primary' ? 'ring-1 ring-slate-700' : ''}`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div>
-                        <div className="font-bold text-white">Equipo {stat.teamNumber}</div>
-                        <div className="text-sm text-slate-400">
-                          prom. {stat.totalAvg.toFixed(1)} · {stat.matchesPlayed} partidos
-                        </div>
+                        <div className="font-bold text-white">Equipo {t.teamNumber}</div>
+                        <div className="text-sm text-slate-400">prom. {t.mean.toFixed(1)}</div>
                       </div>
                       {/* El drag HTML5 nativo no funciona por gestos táctiles en
                           iOS Safari / Chrome Android — este <select> nativo es
@@ -111,7 +109,7 @@ export function Picklist({ stats }: { stats: TeamStat[] }) {
                       {editable && (
                         <select
                           value={tier}
-                          onChange={(e) => setTierFor(stat.teamNumber, e.target.value as Tier)}
+                          onChange={(e) => setTierFor(t.teamNumber, e.target.value as Tier)}
                           className="shrink-0 rounded-md bg-slate-700 px-2 py-1 text-xs text-white"
                         >
                           {COLUMNS.map((c) => (

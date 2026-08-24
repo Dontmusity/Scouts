@@ -62,12 +62,14 @@ export function Dashboard() {
         </section>
       )}
 
-      {stats.length > 0 && (
+      {/* Sin scouting manual todavía, clasifica con OPR para no perder el
+          PickList justo cuando el evento recién se sincronizó. */}
+      {(stats.length > 0 || oprTeams.length > 0) && (
         <section>
           <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">
             PickList (arrastra en desktop o usa el selector en el celular)
           </h2>
-          <Picklist stats={stats} />
+          <Picklist teams={stats.length > 0 ? scoutedTeams : oprTeams} />
         </section>
       )}
 
