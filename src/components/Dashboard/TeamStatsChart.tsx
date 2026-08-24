@@ -1,8 +1,8 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
-import type { TeamStat } from '../../lib/teamStats'
+import type { PredictorTeam } from './MatchPredictor'
 
-export function TeamStatsChart({ stats }: { stats: TeamStat[] }) {
-  const data = stats.slice(0, 12).map((s) => ({ team: s.teamNumber, promedio: Number(s.totalAvg.toFixed(1)) }))
+export function TeamStatsChart({ teams }: { teams: PredictorTeam[] }) {
+  const data = teams.slice(0, 12).map((t) => ({ team: t.teamNumber, promedio: Number(t.mean.toFixed(1)) }))
 
   return (
     <div className="h-72 w-full">

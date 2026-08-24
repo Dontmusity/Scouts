@@ -49,7 +49,11 @@ export function MatchPredictor({
   oprTeams: PredictorTeam[]
   allianceSize: 2 | 3
 }) {
-  const [source, setSource] = useState<'scouted' | 'opr'>('scouted')
+  // Si aún no hay scouting manual pero ya se sincronizó el evento, arranca en
+  // OPR para no aterrizar en un selector de equipos vacío.
+  const [source, setSource] = useState<'scouted' | 'opr'>(() =>
+    scoutedTeams.length === 0 && oprTeams.length > 0 ? 'opr' : 'scouted',
+  )
   const [red, setRed] = useState<string[]>(Array(allianceSize).fill(''))
   const [blue, setBlue] = useState<string[]>(Array(allianceSize).fill(''))
 
