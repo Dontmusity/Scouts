@@ -1,6 +1,11 @@
 import { useState } from 'react'
-import type { TeamStat } from '../../lib/teamStats'
 import { winProbability } from '../../lib/winProbability'
+
+export interface PredictorTeam {
+  teamNumber: string
+  mean: number
+  variance: number
+}
 
 function AllianceSelect({
   label,
@@ -10,7 +15,7 @@ function AllianceSelect({
 }: {
   label: string
   slots: string[]
-  teams: TeamStat[]
+  teams: PredictorTeam[]
   onChange: (i: number, team: string) => void
 }) {
   return (
@@ -26,7 +31,7 @@ function AllianceSelect({
           <option value="">— Equipo —</option>
           {teams.map((t) => (
             <option key={t.teamNumber} value={t.teamNumber}>
-              {t.teamNumber} (prom. {t.totalAvg.toFixed(1)})
+              {t.teamNumber} (prom. {t.mean.toFixed(1)})
             </option>
           ))}
         </select>
@@ -35,17 +40,26 @@ function AllianceSelect({
   )
 }
 
-export function MatchPredictor({ stats, allianceSize }: { stats: TeamStat[]; allianceSize: 2 | 3 }) {
+export function MatchPredictor({
+  scoutedTeams,
+  oprTeams,
+  allianceSize,
+}: {
+  scoutedTeams: PredictorTeam[]
+  oprTeams: PredictorTeam[]
+  allianceSize: 2 | 3
+}) {
+  const [source, setSource] = useState<'scouted' | 'opr'>('scouted')
   const [red, setRed] = useState<string[]>(Array(allianceSize).fill(''))
   const [blue, setBlue] = useState<string[]>(Array(allianceSize).fill(''))
 
-  const byTeam = new Map(stats.map((s) => [s.teamNumber, s.totalAvg]))
-  const byTeamVar = new Map(stats.map((s) => [s.teamNumber, s.stdDev ** 2]))
-  const sum = (teams: string[], byValue: Map<string, number>) =>
-    teams.reduce((acc, t) => acc + (byValue.get(t) ?? 0), 0)
-  const redScore = sum(red, byTeam)
-  const blueScore = sum(blue, byTeam)
-  const redWinPct = winProbability(redScore, sum(red, byTeamVar), blueScore, sum(blue, byTeamVar)) * 100
+  const teams = source === 'opr' ? oprTeams : scoutedTeams
+  const byTeam = new Map(teams.map((t) => [t.teamNumber, t]))
+  const sum = (slots: string[], pick: (t: PredictorTeam) => number) =>
+    slots.reduce((acc, id) => acc + (byTeam.has(id) ? pick(byTeam.get(id)!) : 0), 0)
+  const redScore = sum(red, (t) => t.mean)
+  const blueScore = sum(blue, (t) => t.mean)
+  const redWinPct = winProbability(redScore, sum(red, (t) => t.variance), blueScore, sum(blue, (t) => t.variance)) * 100
   const hasPicks = red.some(Boolean) && blue.some(Boolean)
 
   function setSlot(setter: typeof setRed, i: number, team: string) {
@@ -54,9 +68,32 @@ export function MatchPredictor({ stats, allianceSize }: { stats: TeamStat[]; all
 
   return (
     <div className="space-y-4">
+      <div className="flex rounded-lg bg-slate-800 p-1 text-sm">
+        <button
+          type="button"
+          onClick={() => setSource('scouted')}
+          className={`rounded-md px-3 py-1.5 font-semibold ${source === 'scouted' ? 'bg-sky-600 text-white' : 'text-slate-400'}`}
+        >
+          Promedio escaneado
+        </button>
+        <button
+          type="button"
+          onClick={() => setSource('opr')}
+          disabled={oprTeams.length === 0}
+          className={`rounded-md px-3 py-1.5 font-semibold disabled:opacity-40 ${source === 'opr' ? 'bg-sky-600 text-white' : 'text-slate-400'}`}
+        >
+          OPR del evento
+        </button>
+      </div>
+      {source === 'opr' && oprTeams.length === 0 && (
+        <p className="text-xs text-slate-500">
+          ℹ️ Sin partidos oficiales jugados sincronizados — sincroniza el evento en la pestaña Eventos para calcular OPR.
+        </p>
+      )}
+
       <div className="grid grid-cols-2 gap-4">
-        <AllianceSelect label="Alianza roja" slots={red} teams={stats} onChange={(i, t) => setSlot(setRed, i, t)} />
-        <AllianceSelect label="Alianza azul" slots={blue} teams={stats} onChange={(i, t) => setSlot(setBlue, i, t)} />
+        <AllianceSelect label="Alianza roja" slots={red} teams={teams} onChange={(i, t) => setSlot(setRed, i, t)} />
+        <AllianceSelect label="Alianza azul" slots={blue} teams={teams} onChange={(i, t) => setSlot(setBlue, i, t)} />
       </div>
 
       {hasPicks && (
@@ -75,8 +112,9 @@ export function MatchPredictor({ stats, allianceSize }: { stats: TeamStat[]; all
             <span className="text-blue-400">{(100 - redWinPct).toFixed(0)}%</span>
           </p>
           <p className="mt-1 text-sm text-slate-400">
-            Predicción basada en el promedio agregado de puntos escaneados por equipo, con probabilidad de
-            victoria a partir de la desviación estándar de cada alianza.
+            {source === 'opr'
+              ? 'Predicción basada en OPR (mínimos cuadrados sobre los partidos oficiales jugados).'
+              : 'Predicción basada en el promedio agregado de puntos escaneados por equipo.'}
           </p>
         </div>
       )}
