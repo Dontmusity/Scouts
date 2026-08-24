@@ -5,6 +5,8 @@ export interface MatchAutofill {
   allies: number[]
   /** Puntaje final oficial de la alianza; null si el partido aún no se jugó. */
   score: number | null
+  /** Puntaje final oficial de la alianza contraria; null si el partido aún no se jugó. */
+  opponentScore: number | null
 }
 
 /**
@@ -30,5 +32,6 @@ export function findMatchAutofill(
   return {
     allies: alliance.filter((t) => t !== tNum),
     score: isRed ? match.redScore : match.blueScore,
+    opponentScore: isRed ? match.blueScore : match.redScore,
   }
 }

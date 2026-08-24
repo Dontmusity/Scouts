@@ -12,16 +12,21 @@ export interface TeamStat {
    */
   totalAvg: number
   stdDev: number
+  /** Desviación estándar por rubro — qué tan consistente es el equipo en cada campo. */
+  stdDevByField: Record<string, number>
 }
 
 const numericTypes: GameField['type'][] = ['counter', 'rating', 'toggle']
 
+/** Los mismos campos que promedia computeTeamStats — para poblar selectores de rubro en la UI. */
+export function numericFieldsOf(fields: GameField[]): GameField[] {
+  return fields.filter((f) => numericTypes.includes(f.type) || (f.type === 'number' && f.countInStats))
+}
+
 export function computeTeamStats(matches: MatchEntry[], fields: GameField[]): TeamStat[] {
   // "number" solo cuenta si se marcó countInStats: la mayoría son
   // identificadores (equipos aliados), no puntaje.
-  const numericFields = fields.filter(
-    (f) => numericTypes.includes(f.type) || (f.type === 'number' && f.countInStats),
-  )
+  const numericFields = numericFieldsOf(fields)
   const byTeam = new Map<string, MatchEntry[]>()
   for (const m of matches) {
     const list = byTeam.get(m.teamNumber) ?? []
@@ -32,9 +37,11 @@ export function computeTeamStats(matches: MatchEntry[], fields: GameField[]): Te
   return Array.from(byTeam.entries())
     .map(([teamNumber, teamMatches]) => {
       const avgByField: Record<string, number> = {}
+      const stdDevByField: Record<string, number> = {}
       for (const field of numericFields) {
         const values = teamMatches.map((m) => toNumber(m.values[field.id]))
         avgByField[field.id] = average(values)
+        stdDevByField[field.id] = stdDev(values)
       }
       const totals = teamMatches.map((m) =>
         numericFields.reduce((sum, f) => sum + toNumber(m.values[f.id]), 0),
@@ -45,6 +52,7 @@ export function computeTeamStats(matches: MatchEntry[], fields: GameField[]): Te
         avgByField,
         totalAvg: average(totals),
         stdDev: stdDev(totals),
+        stdDevByField,
       }
     })
     .sort((a, b) => b.totalAvg - a.totalAvg)

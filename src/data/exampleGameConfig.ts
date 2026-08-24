@@ -28,6 +28,7 @@ export const exampleGameConfig: GameConfig = {
     // Endgame
     { id: 'endgameClimb', label: 'Resultado de Endgame', type: 'dropdown', phase: 'endgame', options: ['Ninguno', 'Parqueado', 'Colgado - Bajo', 'Colgado - Alto'] },
     { id: 'allianceScore', label: 'Puntaje final de la alianza', type: 'number', phase: 'endgame', countInStats: true, autofill: 'score' },
+    { id: 'opponentAllianceScore', label: 'Puntaje final de la alianza contraria', type: 'number', phase: 'endgame', autofill: 'opponentScore' },
 
     // Subjetivo
     { id: 'driverSkill', label: 'Habilidad del piloto', type: 'rating', phase: 'subjective', max: 5 },

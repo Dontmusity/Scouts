@@ -44,6 +44,9 @@ export function MatchForm() {
     }
     const allyIds = config.fields.filter((f) => f.type === 'number' && f.autofill === 'ally').map((f) => f.id)
     const scoreIds = config.fields.filter((f) => f.type === 'number' && f.autofill === 'score').map((f) => f.id)
+    const opponentScoreIds = config.fields
+      .filter((f) => f.type === 'number' && f.autofill === 'opponentScore')
+      .map((f) => f.id)
 
     setValues((prev) => {
       const next = { ...prev }
@@ -58,6 +61,14 @@ export function MatchForm() {
         scoreIds.forEach((id) => {
           if (next[id] === undefined) {
             next[id] = result.score as number
+            changed = true
+          }
+        })
+      }
+      if (result.opponentScore !== null) {
+        opponentScoreIds.forEach((id) => {
+          if (next[id] === undefined) {
+            next[id] = result.opponentScore as number
             changed = true
           }
         })

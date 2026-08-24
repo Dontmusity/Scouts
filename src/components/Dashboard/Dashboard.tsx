@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useScoutStore } from '../../store/useScoutStore'
 import { computeTeamStats } from '../../lib/teamStats'
 import { TeamStatsChart } from './TeamStatsChart'
+import { ConsistencyChart } from './ConsistencyChart'
 import { Picklist } from './Picklist'
 import { MatchPredictor } from './MatchPredictor'
 
@@ -18,6 +19,13 @@ export function Dashboard() {
       <section>
         <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">Promedio por equipo</h2>
         <TeamStatsChart stats={stats} />
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">
+          Consistencia (desviación estándar — menor es más consistente)
+        </h2>
+        <ConsistencyChart stats={stats} fields={config.fields} />
       </section>
 
       <section>

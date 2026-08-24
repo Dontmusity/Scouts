@@ -67,10 +67,11 @@ export interface NumberField extends BaseField {
    * Autocompletar este campo desde el cronograma oficial del evento
    * sincronizado, cuando # Partido y # Equipo coinciden con un partido real:
    * 'ally' → siguiente compañero de alianza (en orden, uno por campo);
-   * 'score' → puntaje final oficial de la alianza (solo si ya se jugó).
+   * 'score' → puntaje final oficial de la alianza (solo si ya se jugó);
+   * 'opponentScore' → puntaje final oficial de la alianza contraria.
    * Nunca sobreescribe un valor que el scout ya haya escrito a mano.
    */
-  autofill?: 'ally' | 'score'
+  autofill?: 'ally' | 'score' | 'opponentScore'
 }
 
 /**
