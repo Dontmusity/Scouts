@@ -1,4 +1,4 @@
-import type { TbaTeam, TbaRanking, TbaAlliance, EventTeam, EventRanking, EventMatch } from '../types/tba'
+import type { AllianceBreakdown, TbaTeam, TbaRanking, TbaAlliance, EventTeam, EventRanking, EventMatch } from '../types/tba'
 
 interface TbaMatchAlliance {
   team_keys: string[]
@@ -10,6 +10,18 @@ interface TbaMatch {
   comp_level: string
   match_number: number
   alliances: { red: TbaMatchAlliance; blue: TbaMatchAlliance }
+  /** Claves específicas del juego de esa temporada — TBA no las estandariza año con año. */
+  score_breakdown: { red?: Record<string, unknown>; blue?: Record<string, unknown> } | null
+}
+
+/** Se queda solo con valores primitivos (número/booleano/texto) — MatchEntry.values no admite otra cosa. */
+function toBreakdown(raw: Record<string, unknown> | undefined): AllianceBreakdown | null {
+  if (!raw) return null
+  const out: AllianceBreakdown = {}
+  for (const [k, v] of Object.entries(raw)) {
+    if (typeof v === 'number' || typeof v === 'boolean' || typeof v === 'string') out[k] = v
+  }
+  return out
 }
 
 const BASE = 'https://www.thebluealliance.com/api/v3'
@@ -38,7 +50,8 @@ export async function fetchTbaRankings(eventKey: string, apiKey: string): Promis
 }
 
 export async function fetchTbaMatches(eventKey: string, apiKey: string): Promise<EventMatch[]> {
-  const matches = await tbaGet<TbaMatch[]>(`/event/${eventKey}/matches/simple`, apiKey)
+  // Nota: /matches (no /matches/simple) porque score_breakdown solo viene en el endpoint completo.
+  const matches = await tbaGet<TbaMatch[]>(`/event/${eventKey}/matches`, apiKey)
   const toTeams = (a: TbaMatchAlliance) => a.team_keys.map((k) => Number(k.replace('frc', '')))
   const toScore = (a: TbaMatchAlliance) => (a.score !== null && a.score >= 0 ? a.score : null)
   return matches
@@ -49,6 +62,8 @@ export async function fetchTbaMatches(eventKey: string, apiKey: string): Promise
       blue: toTeams(m.alliances.blue),
       redScore: toScore(m.alliances.red),
       blueScore: toScore(m.alliances.blue),
+      redBreakdown: toBreakdown(m.score_breakdown?.red),
+      blueBreakdown: toBreakdown(m.score_breakdown?.blue),
     }))
 }
 

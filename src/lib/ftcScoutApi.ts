@@ -1,4 +1,19 @@
-import type { EventTeam, EventRanking, EventMatch } from '../types/tba'
+import type { AllianceBreakdown, EventTeam, EventRanking, EventMatch } from '../types/tba'
+
+/** Campos confirmados estables por temporada (2023-2025) en el schema MatchScores<year>Alliance de FTCScout. */
+interface FtcAllianceScore {
+  totalPoints: number
+  autoPoints: number
+  dcPoints: number
+  penaltyPointsCommitted: number
+  totalPointsNp: number
+}
+
+function toBreakdown(score: FtcAllianceScore | null | undefined): AllianceBreakdown | null {
+  if (!score) return null
+  const { autoPoints, dcPoints, penaltyPointsCommitted, totalPointsNp } = score
+  return { autoPoints, dcPoints, penaltyPointsCommitted, totalPointsNp }
+}
 
 const ENDPOINT = 'https://api.ftcscout.org/graphql'
 
@@ -60,15 +75,17 @@ interface EventMatchesResponse {
     matches: {
       matchNum: number
       teams: { teamNumber: number; alliance: 'Red' | 'Blue' }[]
-      scores: { red: { totalPoints: number } | null; blue: { totalPoints: number } | null } | null
+      scores: { red: FtcAllianceScore | null; blue: FtcAllianceScore | null } | null
     }[]
   } | null
 }
 
+const ALLIANCE_SCORE_FIELDS = 'totalPoints autoPoints dcPoints penaltyPointsCommitted totalPointsNp'
+
 export async function fetchFtcEventMatches(season: number, code: string): Promise<EventMatch[]> {
   assertSeason(season)
   const data = await ftcQuery<EventMatchesResponse>(
-    `query($season: Int!, $code: String!){ eventByCode(season: $season, code: $code) { matches { matchNum teams { teamNumber alliance } scores { ... on MatchScores${season} { red { totalPoints } blue { totalPoints } } } } } }`,
+    `query($season: Int!, $code: String!){ eventByCode(season: $season, code: $code) { matches { matchNum teams { teamNumber alliance } scores { ... on MatchScores${season} { red { ${ALLIANCE_SCORE_FIELDS} } blue { ${ALLIANCE_SCORE_FIELDS} } } } } } }`,
     { season, code: code.trim() },
   )
   if (!data.eventByCode) throw new Error('Evento no encontrado en FTCScout')
@@ -78,6 +95,8 @@ export async function fetchFtcEventMatches(season: number, code: string): Promis
     blue: m.teams.filter((t) => t.alliance === 'Blue').map((t) => t.teamNumber),
     redScore: m.scores?.red?.totalPoints ?? null,
     blueScore: m.scores?.blue?.totalPoints ?? null,
+    redBreakdown: toBreakdown(m.scores?.red),
+    blueBreakdown: toBreakdown(m.scores?.blue),
   }))
 }
 

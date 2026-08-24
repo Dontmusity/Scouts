@@ -14,6 +14,23 @@ export interface BaseField {
   type: FieldType
   /** Which phase of the match this field belongs to. */
   phase: 'prematch' | 'auto' | 'teleop' | 'endgame' | 'pit' | 'subjective'
+  /**
+   * Autocompletar este campo desde el cronograma oficial del evento
+   * sincronizado, cuando # Partido y # Equipo coinciden con un partido real:
+   * 'ally' → siguiente compañero de alianza (en orden, uno por campo, solo campos "number");
+   * 'score' → puntaje final oficial de la alianza (solo si ya se jugó);
+   * 'opponentScore' → puntaje final oficial de la alianza contraria;
+   * 'breakdownOwn' / 'breakdownOpponent' → un valor puntual del desglose
+   * oficial (auto/teleop/penalizaciones…) de la alianza propia o contraria —
+   * requiere "breakdownKey". Las claves disponibles dependen de la fuente:
+   * FTCScout siempre trae autoPoints, dcPoints, penaltyPointsCommitted,
+   * totalPointsNp, totalPoints; TBA (FRC) trae claves específicas del juego
+   * de esa temporada (usualmente incluye autoPoints, teleopPoints, foulPoints).
+   * Nunca sobreescribe un valor que el scout ya haya escrito a mano.
+   */
+  autofill?: 'ally' | 'score' | 'opponentScore' | 'breakdownOwn' | 'breakdownOpponent'
+  /** Clave a leer del desglose oficial — solo se usa con autofill 'breakdownOwn'/'breakdownOpponent'. */
+  breakdownKey?: string
 }
 
 export interface CounterField extends BaseField {
@@ -63,15 +80,6 @@ export interface NumberField extends BaseField {
    * Actívalo solo en campos que sí sean una métrica de desempeño (puntaje).
    */
   countInStats?: boolean
-  /**
-   * Autocompletar este campo desde el cronograma oficial del evento
-   * sincronizado, cuando # Partido y # Equipo coinciden con un partido real:
-   * 'ally' → siguiente compañero de alianza (en orden, uno por campo);
-   * 'score' → puntaje final oficial de la alianza (solo si ya se jugó);
-   * 'opponentScore' → puntaje final oficial de la alianza contraria.
-   * Nunca sobreescribe un valor que el scout ya haya escrito a mano.
-   */
-  autofill?: 'ally' | 'score' | 'opponentScore'
 }
 
 /**

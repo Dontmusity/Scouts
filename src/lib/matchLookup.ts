@@ -1,4 +1,4 @@
-import type { EventMatch } from '../types/tba'
+import type { AllianceBreakdown, EventMatch } from '../types/tba'
 
 export interface MatchAutofill {
   /** Compañeros de alianza (sin el equipo escrito), en el orden del cronograma oficial. */
@@ -7,6 +7,10 @@ export interface MatchAutofill {
   score: number | null
   /** Puntaje final oficial de la alianza contraria; null si el partido aún no se jugó. */
   opponentScore: number | null
+  /** Desglose oficial (auto/teleop/penalizaciones…) de la alianza propia. */
+  breakdown: AllianceBreakdown | null
+  /** Desglose oficial de la alianza contraria. */
+  opponentBreakdown: AllianceBreakdown | null
 }
 
 /**
@@ -33,5 +37,7 @@ export function findMatchAutofill(
     allies: alliance.filter((t) => t !== tNum),
     score: isRed ? match.redScore : match.blueScore,
     opponentScore: isRed ? match.blueScore : match.redScore,
+    breakdown: isRed ? match.redBreakdown : match.blueBreakdown,
+    opponentBreakdown: isRed ? match.blueBreakdown : match.redBreakdown,
   }
 }

@@ -47,6 +47,8 @@ export function MatchForm() {
     const opponentScoreIds = config.fields
       .filter((f) => f.type === 'number' && f.autofill === 'opponentScore')
       .map((f) => f.id)
+    const breakdownOwnFields = config.fields.filter((f) => f.autofill === 'breakdownOwn' && f.breakdownKey)
+    const breakdownOpponentFields = config.fields.filter((f) => f.autofill === 'breakdownOpponent' && f.breakdownKey)
 
     setValues((prev) => {
       const next = { ...prev }
@@ -73,6 +75,21 @@ export function MatchForm() {
           }
         })
       }
+      // Un valor puntual del desglose oficial (auto/teleop/penalizaciones…), ver GameField.breakdownKey.
+      breakdownOwnFields.forEach((f) => {
+        const v = result.breakdown?.[f.breakdownKey as string]
+        if (next[f.id] === undefined && v !== undefined) {
+          next[f.id] = v
+          changed = true
+        }
+      })
+      breakdownOpponentFields.forEach((f) => {
+        const v = result.opponentBreakdown?.[f.breakdownKey as string]
+        if (next[f.id] === undefined && v !== undefined) {
+          next[f.id] = v
+          changed = true
+        }
+      })
       if (changed) setAutofilled(true)
       return changed ? next : prev
     })

@@ -79,9 +79,9 @@ function solveLinearSystem(A: number[][], b: number[]): number[] {
 
 if (import.meta.env.DEV) {
   const testMatches: EventMatch[] = [
-    { matchNumber: 1, red: [1, 2], blue: [2, 3], redScore: 30, blueScore: 25 },
-    { matchNumber: 2, red: [1, 3], blue: [1, 2], redScore: 28, blueScore: 32 },
-    { matchNumber: 3, red: [2, 3], blue: [1, 3], redScore: 27, blueScore: 26 },
+    { matchNumber: 1, red: [1, 2], blue: [2, 3], redScore: 30, blueScore: 25, redBreakdown: null, blueBreakdown: null },
+    { matchNumber: 2, red: [1, 3], blue: [1, 2], redScore: 28, blueScore: 32, redBreakdown: null, blueBreakdown: null },
+    { matchNumber: 3, red: [2, 3], blue: [1, 3], redScore: 27, blueScore: 26, redBreakdown: null, blueBreakdown: null },
   ]
   const opr = computeOpr(testMatches)
   const variance = computeOprResidualVariance(testMatches, opr)

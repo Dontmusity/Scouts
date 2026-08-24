@@ -29,6 +29,10 @@ export const exampleGameConfig: GameConfig = {
     { id: 'endgameClimb', label: 'Resultado de Endgame', type: 'dropdown', phase: 'endgame', options: ['Ninguno', 'Parqueado', 'Colgado - Bajo', 'Colgado - Alto'] },
     { id: 'allianceScore', label: 'Puntaje final de la alianza', type: 'number', phase: 'endgame', countInStats: true, autofill: 'score' },
     { id: 'opponentAllianceScore', label: 'Puntaje final de la alianza contraria', type: 'number', phase: 'endgame', autofill: 'opponentScore' },
+    // Ejemplo de autofill desde el desglose oficial — ajusta breakdownKey a las
+    // claves reales de tu temporada (revisa el desglose sincronizado, difiere
+    // entre TBA y FTCScout; ver comentario de "autofill" en types/gameConfig.ts).
+    { id: 'officialAutoPoints', label: 'Puntos de Auto (oficial)', type: 'number', phase: 'auto', autofill: 'breakdownOwn', breakdownKey: 'autoPoints' },
 
     // Subjetivo
     { id: 'driverSkill', label: 'Habilidad del piloto', type: 'rating', phase: 'subjective', max: 5 },

@@ -28,6 +28,10 @@ export interface EventRanking {
   losses: number
 }
 
+/** Un solo valor primitivo del desglose oficial — ver GameField.breakdownKey. */
+export type BreakdownValue = number | boolean | string
+export type AllianceBreakdown = Record<string, BreakdownValue>
+
 /** Partido oficial del cronograma del evento — usado para autocompletar aliados y puntaje. */
 export interface EventMatch {
   matchNumber: number
@@ -36,4 +40,7 @@ export interface EventMatch {
   /** null hasta que el partido se jugó/publicó el resultado. */
   redScore: number | null
   blueScore: number | null
+  /** Desglose de puntaje por categoría (auto/teleop/penalizaciones…); null si no está disponible. */
+  redBreakdown: AllianceBreakdown | null
+  blueBreakdown: AllianceBreakdown | null
 }
