@@ -66,7 +66,9 @@ export function Dashboard() {
   if (stats.length === 0 && oprTeams.length === 0) {
     return (
       <p className="p-8 text-center text-slate-500">
-        Aún no hay partidos escaneados ni un evento sincronizado con resultados para analizar.
+        {eventMatches.length > 0
+          ? `El cronograma está sincronizado (${eventMatches.length} partidos) pero ninguno tiene resultado oficial publicado todavía — vuelve a sincronizar cuando el evento reporte partidos jugados.`
+          : 'Aún no hay partidos escaneados ni un evento sincronizado con resultados para analizar.'}
       </p>
     )
   }
