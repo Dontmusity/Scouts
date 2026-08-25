@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { winProbability } from '../../lib/winProbability'
 
 export interface PredictorTeam {
@@ -49,13 +49,17 @@ export function MatchPredictor({
   oprTeams: PredictorTeam[]
   allianceSize: 2 | 3
 }) {
-  // Si aún no hay scouting manual pero ya se sincronizó el evento, arranca en
-  // OPR para no aterrizar en un selector de equipos vacío.
-  const [source, setSource] = useState<'scouted' | 'opr'>(() =>
-    scoutedTeams.length === 0 && oprTeams.length > 0 ? 'opr' : 'scouted',
-  )
+  const [source, setSource] = useState<'scouted' | 'opr'>('scouted')
+  const [sourceTouched, setSourceTouched] = useState(false)
   const [red, setRed] = useState<string[]>(Array(allianceSize).fill(''))
   const [blue, setBlue] = useState<string[]>(Array(allianceSize).fill(''))
+
+  // Si aún no hay scouting manual pero ya se sincronizó el evento, salta a
+  // OPR en cuanto ese dato llegue — el store de eventos hidrata async, así
+  // que al montar puede estar vacío todavía y un useState inicial se queda pegado.
+  useEffect(() => {
+    if (!sourceTouched && scoutedTeams.length === 0 && oprTeams.length > 0) setSource('opr')
+  }, [sourceTouched, scoutedTeams.length, oprTeams.length])
 
   const teams = source === 'opr' ? oprTeams : scoutedTeams
   const byTeam = new Map(teams.map((t) => [t.teamNumber, t]))
@@ -75,14 +79,20 @@ export function MatchPredictor({
       <div className="flex rounded-lg bg-slate-800 p-1 text-sm">
         <button
           type="button"
-          onClick={() => setSource('scouted')}
+          onClick={() => {
+            setSource('scouted')
+            setSourceTouched(true)
+          }}
           className={`rounded-md px-3 py-1.5 font-semibold ${source === 'scouted' ? 'bg-sky-600 text-white' : 'text-slate-400'}`}
         >
           Promedio escaneado
         </button>
         <button
           type="button"
-          onClick={() => setSource('opr')}
+          onClick={() => {
+            setSource('opr')
+            setSourceTouched(true)
+          }}
           disabled={oprTeams.length === 0}
           className={`rounded-md px-3 py-1.5 font-semibold disabled:opacity-40 ${source === 'opr' ? 'bg-sky-600 text-white' : 'text-slate-400'}`}
         >

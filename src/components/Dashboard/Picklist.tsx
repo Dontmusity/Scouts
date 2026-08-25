@@ -3,12 +3,14 @@ import type { PredictorTeam } from './MatchPredictor'
 import { usePicklistStore, type Tier } from '../../store/usePicklistStore'
 import { computeMergedTiers } from '../../lib/picklistMerge'
 
+// "Sin clasificar" primero: ahí caen todos los equipos por defecto — al
+// final de la lista quedaba fuera de pantalla y parecía que no había equipos.
 const COLUMNS: { tier: Tier; label: string }[] = [
+  { tier: 'uncategorized', label: 'Sin clasificar' },
   { tier: 'tier1', label: 'Tier 1' },
   { tier: 'tier2', label: 'Tier 2' },
   { tier: 'tier3', label: 'Tier 3' },
   { tier: 'doNotPick', label: 'No elegir' },
-  { tier: 'uncategorized', label: 'Sin clasificar' },
 ]
 
 export function Picklist({ teams: roster }: { teams: PredictorTeam[] }) {
