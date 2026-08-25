@@ -13,11 +13,16 @@ const COLUMNS: { tier: Tier; label: string }[] = [
   { tier: 'doNotPick', label: 'No elegir' },
 ]
 
-export function Picklist({ teams: roster }: { teams: PredictorTeam[] }) {
+export function Picklist({ teams: roster, eventId }: { teams: PredictorTeam[]; eventId: string }) {
   const { scoutName, setScoutName, assignments, setTierFor } = usePicklistStore()
   const [mode, setMode] = useState<'mine' | 'primary'>('mine')
   const [dragTeam, setDragTeam] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  // Clasificaciones guardadas por evento: sin esto, los tiers de un evento
+  // anterior (mismo número de equipo, otra competencia) se colaban en la
+  // "Lista primaria" del evento nuevo.
+  const keyFor = (teamNumber: string) => `${eventId}:${teamNumber}`
 
   const myTiers = assignments[scoutName] ?? {}
   const mergedTiers = computeMergedTiers(assignments)
@@ -79,7 +84,7 @@ export function Picklist({ teams: roster }: { teams: PredictorTeam[] }) {
 
       <div ref={scrollRef} onDragOver={handleContainerDragOver} className="flex gap-3 overflow-x-auto pb-2 snap-x">
         {COLUMNS.map(({ tier, label }) => {
-          const teams = roster.filter((t) => tierOf(t.teamNumber) === tier)
+          const teams = roster.filter((t) => tierOf(keyFor(t.teamNumber)) === tier)
           return (
             <div
               key={tier}
@@ -95,7 +100,7 @@ export function Picklist({ teams: roster }: { teams: PredictorTeam[] }) {
                   <div
                     key={t.teamNumber}
                     draggable={editable}
-                    onDragStart={() => setDragTeam(t.teamNumber)}
+                    onDragStart={() => setDragTeam(keyFor(t.teamNumber))}
                     className={`rounded-lg bg-slate-800 p-3 ${
                       editable ? 'cursor-grab active:cursor-grabbing' : 'opacity-70'
                     } ${!editable && mode === 'primary' ? 'ring-1 ring-slate-700' : ''}`}
@@ -111,7 +116,7 @@ export function Picklist({ teams: roster }: { teams: PredictorTeam[] }) {
                       {editable && (
                         <select
                           value={tier}
-                          onChange={(e) => setTierFor(t.teamNumber, e.target.value as Tier)}
+                          onChange={(e) => setTierFor(keyFor(t.teamNumber), e.target.value as Tier)}
                           className="shrink-0 rounded-md bg-slate-700 px-2 py-1 text-xs text-white"
                         >
                           {COLUMNS.map((c) => (

@@ -23,6 +23,7 @@ const BREAKDOWN_LABELS: Record<string, string> = {
 export function Dashboard() {
   const { config, matches } = useScoutStore()
   const eventMatches = useEventStore((s) => s.matches)
+  const eventId = useEventStore((s) => (config.mode === 'FRC' ? s.tbaEventKey : s.ftcEventCode))
   const stats = useMemo(() => computeTeamStats(matches, config.fields), [matches, config.fields])
 
   const scoutedTeams: PredictorTeam[] = useMemo(
@@ -110,7 +111,7 @@ export function Dashboard() {
           <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">
             PickList (arrastra en desktop o usa el selector en el celular)
           </h2>
-          <Picklist teams={stats.length > 0 ? scoutedTeams : oprTeams} />
+          <Picklist teams={stats.length > 0 ? scoutedTeams : oprTeams} eventId={eventId} />
         </section>
       )}
 
