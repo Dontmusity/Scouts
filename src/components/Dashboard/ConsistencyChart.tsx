@@ -1,18 +1,25 @@
 import { useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
-import type { TeamStat } from '../../lib/teamStats'
-import { numericFieldsOf } from '../../lib/teamStats'
-import type { GameField } from '../../types/gameConfig'
+
+export interface ConsistencyEntry {
+  teamNumber: string
+  total: number
+  byField: Record<string, number>
+}
+
+export interface ConsistencyOption {
+  id: string
+  label: string
+}
 
 /** Menor desviación = equipo más consistente en ese rubro. */
-export function ConsistencyChart({ stats, fields }: { stats: TeamStat[]; fields: GameField[] }) {
+export function ConsistencyChart({ entries, options }: { entries: ConsistencyEntry[]; options: ConsistencyOption[] }) {
   const [fieldId, setFieldId] = useState<string>('total')
-  const options = numericFieldsOf(fields)
 
-  const data = stats
-    .map((s) => ({
-      team: s.teamNumber,
-      desviacion: Number((fieldId === 'total' ? s.stdDev : (s.stdDevByField[fieldId] ?? 0)).toFixed(2)),
+  const data = entries
+    .map((e) => ({
+      team: e.teamNumber,
+      desviacion: Number((fieldId === 'total' ? e.total : (e.byField[fieldId] ?? 0)).toFixed(2)),
     }))
     .sort((a, b) => a.desviacion - b.desviacion)
 
@@ -24,9 +31,9 @@ export function ConsistencyChart({ stats, fields }: { stats: TeamStat[]; fields:
         className="rounded-lg bg-slate-800 px-3 py-2 text-sm text-white"
       >
         <option value="total">Puntaje total</option>
-        {options.map((f) => (
-          <option key={f.id} value={f.id}>
-            {f.label}
+        {options.map((o) => (
+          <option key={o.id} value={o.id}>
+            {o.label}
           </option>
         ))}
       </select>

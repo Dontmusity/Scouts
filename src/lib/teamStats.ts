@@ -64,12 +64,12 @@ function toNumber(v: number | boolean | string | undefined): number {
   return 0
 }
 
-function average(nums: number[]): number {
+export function average(nums: number[]): number {
   if (nums.length === 0) return 0
   return nums.reduce((a, b) => a + b, 0) / nums.length
 }
 
-function stdDev(nums: number[]): number {
+export function stdDev(nums: number[]): number {
   if (nums.length < 2) return 0
   const avg = average(nums)
   const variance = average(nums.map((n) => (n - avg) ** 2))
