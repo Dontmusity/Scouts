@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { winProbability } from '../../lib/winProbability'
+import { useEventStore } from '../../store/useEventStore'
+import { formatTeamLabel } from '../../lib/teamName'
 
 export interface PredictorTeam {
   teamNumber: string
@@ -11,11 +13,13 @@ function AllianceSelect({
   label,
   slots,
   teams,
+  namesByNumber,
   onChange,
 }: {
   label: string
   slots: string[]
   teams: PredictorTeam[]
+  namesByNumber: Map<string, string>
   onChange: (i: number, team: string) => void
 }) {
   return (
@@ -31,7 +35,7 @@ function AllianceSelect({
           <option value="">— Equipo —</option>
           {teams.map((t) => (
             <option key={t.teamNumber} value={t.teamNumber}>
-              {t.teamNumber} (prom. {t.mean.toFixed(1)})
+              {formatTeamLabel(t.teamNumber, namesByNumber.get(t.teamNumber), true)} (prom. {t.mean.toFixed(1)})
             </option>
           ))}
         </select>
@@ -53,6 +57,12 @@ export function MatchPredictor({
   const [sourceTouched, setSourceTouched] = useState(false)
   const [red, setRed] = useState<string[]>(Array(allianceSize).fill(''))
   const [blue, setBlue] = useState<string[]>(Array(allianceSize).fill(''))
+  const eventTeams = useEventStore((s) => s.teams)
+  const namesByNumber = useMemo(() => {
+    const m = new Map<string, string>()
+    for (const t of eventTeams) m.set(String(t.teamNumber), t.name)
+    return m
+  }, [eventTeams])
 
   // Si aún no hay scouting manual pero ya se sincronizó el evento, salta a
   // OPR en cuanto ese dato llegue — el store de eventos hidrata async, así
@@ -106,8 +116,20 @@ export function MatchPredictor({
       )}
 
       <div className="grid grid-cols-2 gap-4">
-        <AllianceSelect label="Alianza roja" slots={red} teams={teams} onChange={(i, t) => setSlot(setRed, i, t)} />
-        <AllianceSelect label="Alianza azul" slots={blue} teams={teams} onChange={(i, t) => setSlot(setBlue, i, t)} />
+        <AllianceSelect
+          label="Alianza roja"
+          slots={red}
+          teams={teams}
+          namesByNumber={namesByNumber}
+          onChange={(i, t) => setSlot(setRed, i, t)}
+        />
+        <AllianceSelect
+          label="Alianza azul"
+          slots={blue}
+          teams={teams}
+          namesByNumber={namesByNumber}
+          onChange={(i, t) => setSlot(setBlue, i, t)}
+        />
       </div>
 
       {hasPicks && (

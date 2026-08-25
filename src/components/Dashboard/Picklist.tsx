@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { PredictorTeam } from './MatchPredictor'
 import { usePicklistStore, type Tier } from '../../store/usePicklistStore'
+import { useEventStore } from '../../store/useEventStore'
 import { computeMergedTiers } from '../../lib/picklistMerge'
+import { formatTeamLabel } from '../../lib/teamName'
 
 // "Sin clasificar" primero: ahí caen todos los equipos por defecto — al
 // final de la lista quedaba fuera de pantalla y parecía que no había equipos.
@@ -15,9 +17,16 @@ const COLUMNS: { tier: Tier; label: string }[] = [
 
 export function Picklist({ teams: roster, eventId }: { teams: PredictorTeam[]; eventId: string }) {
   const { scoutName, setScoutName, assignments, setTierFor } = usePicklistStore()
+  const eventTeams = useEventStore((s) => s.teams)
   const [mode, setMode] = useState<'mine' | 'primary'>('mine')
   const [dragTeam, setDragTeam] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  const namesByNumber = useMemo(() => {
+    const m = new Map<string, string>()
+    for (const t of eventTeams) m.set(String(t.teamNumber), t.name)
+    return m
+  }, [eventTeams])
 
   // Clasificaciones guardadas por evento: sin esto, los tiers de un evento
   // anterior (mismo número de equipo, otra competencia) se colaban en la
@@ -107,7 +116,9 @@ export function Picklist({ teams: roster, eventId }: { teams: PredictorTeam[]; e
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div>
-                        <div className="font-bold text-white">Equipo {t.teamNumber}</div>
+                        <div className="font-bold text-white">
+                          Equipo {formatTeamLabel(t.teamNumber, namesByNumber.get(t.teamNumber), true)}
+                        </div>
                         <div className="text-sm text-slate-400">prom. {t.mean.toFixed(1)}</div>
                       </div>
                       {/* El drag HTML5 nativo no funciona por gestos táctiles en
