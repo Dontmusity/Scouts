@@ -10,6 +10,8 @@ import {
   type MatchEntry,
 } from '../lib/db'
 
+const ACTIVE_GAME_KEY = 'activeGameId'
+
 interface ScoutState {
   config: GameConfig
   matches: MatchEntry[]
@@ -26,7 +28,9 @@ export const useScoutStore = create<ScoutState>((set, get) => ({
   loaded: false,
 
   init: async () => {
-    const stored = await loadGameConfig(exampleGameConfig.gameId)
+    // Recordar el último gameId aplicado; si no, al recargar volvía siempre al config por defecto
+    const activeId = localStorage.getItem(ACTIVE_GAME_KEY) ?? exampleGameConfig.gameId
+    const stored = (await loadGameConfig(activeId)) ?? (await loadGameConfig(exampleGameConfig.gameId))
     const config = stored ?? exampleGameConfig
     if (!stored) await saveGameConfig(exampleGameConfig)
     const matches = await listMatches(config.gameId)
@@ -35,6 +39,7 @@ export const useScoutStore = create<ScoutState>((set, get) => ({
 
   setConfig: async (config) => {
     await saveGameConfig(config)
+    localStorage.setItem(ACTIVE_GAME_KEY, config.gameId)
     const matches = await listMatches(config.gameId)
     set({ config, matches })
   },

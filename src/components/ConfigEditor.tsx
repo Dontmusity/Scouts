@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { useScoutStore } from '../store/useScoutStore'
 import { validateGameConfig, type GameConfig } from '../types/gameConfig'
+import { exampleGameConfig } from '../data/exampleGameConfig'
+import { biobuzzConfig } from '../data/biobuzzConfig'
+import { loadGameConfig } from '../lib/db'
+
+const presets = [exampleGameConfig, biobuzzConfig]
 
 export function ConfigEditor() {
   const { config, matches, setConfig } = useScoutStore()
@@ -58,8 +63,30 @@ export function ConfigEditor() {
     }
   }
 
+  async function loadPreset(preset: GameConfig) {
+    // Si ya se usó antes, retoma su versión guardada (con las ediciones que se le hayan hecho)
+    const next = (await loadGameConfig(preset.gameId)) ?? preset
+    if (confirmIfHidesData(next)) {
+      setText(JSON.stringify(next, null, 2))
+      setConfig(next)
+      setError(null)
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4 text-left">
+      <div className="flex gap-2">
+        {presets.map((p) => (
+          <button
+            key={p.gameId}
+            className={`flex-1 rounded-lg px-4 py-2 font-bold ${config.gameId === p.gameId ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-300'}`}
+            onClick={() => loadPreset(p)}
+          >
+            {p.gameName}
+          </button>
+        ))}
+      </div>
+
       <div className="flex gap-2">
         {(['FRC', 'FTC'] as const).map((m) => (
           <button
