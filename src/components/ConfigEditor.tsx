@@ -47,21 +47,6 @@ export function ConfigEditor() {
     }
   }
 
-  function setMode(mode: GameConfig['mode']) {
-    // Cambia el modo sobre el borrador actual, no sobre el último config
-    // aplicado — así el toggle no destruye ediciones sin guardar.
-    try {
-      const draft = JSON.parse(text) as GameConfig
-      const next = validateGameConfig({ ...draft, mode })
-      if (confirmIfHidesData(next)) {
-        setText(JSON.stringify(next, null, 2))
-        setConfig(next)
-        setError(null)
-      }
-    } catch {
-      setError('El JSON del borrador no es válido; corrígelo antes de cambiar el modo.')
-    }
-  }
 
   async function loadPreset(preset: GameConfig) {
     // Si ya se usó antes, retoma su versión guardada (con las ediciones que se le hayan hecho)
@@ -83,18 +68,6 @@ export function ConfigEditor() {
             onClick={() => loadPreset(p)}
           >
             {p.gameName}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex gap-2">
-        {(['FRC', 'FTC'] as const).map((m) => (
-          <button
-            key={m}
-            className={`rounded-lg px-4 py-2 font-bold ${config.mode === m ? 'bg-sky-600 text-white' : 'bg-slate-700 text-slate-300'}`}
-            onClick={() => setMode(m)}
-          >
-            {m}
           </button>
         ))}
       </div>

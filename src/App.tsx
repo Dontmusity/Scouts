@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
+import { useRegisterSW } from 'virtual:pwa-register/react'
 import { useScoutStore } from './store/useScoutStore'
 import { usePitStore } from './store/usePitStore'
 import { MatchForm } from './components/MatchForm'
@@ -24,6 +25,7 @@ export default function App() {
   const { init, loaded, config } = useScoutStore()
   const initPit = usePitStore((s) => s.init)
   const [tab, setTab] = useState<Tab>('scout')
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
 
   useEffect(() => {
     init()
@@ -45,6 +47,12 @@ export default function App() {
           {config.mode} · {config.season}
         </p>
       </header>
+
+      {needRefresh && (
+        <button className="w-full bg-sky-600 py-2 text-sm font-bold text-white" onClick={() => updateServiceWorker(true)}>
+          Hay una versión nueva — toca para actualizar
+        </button>
+      )}
 
       <main className="pb-16">
         {tab === 'scout' && <MatchForm />}

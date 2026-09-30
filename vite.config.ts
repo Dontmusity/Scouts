@@ -10,7 +10,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // prompt, no autoUpdate: recargar sola a mitad de un partido borraría lo capturado
+      registerType: 'prompt',
       manifest: {
         name: 'Scouting App — FRC/FTC',
         short_name: 'Scouting',
