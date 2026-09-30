@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useScoutStore } from '../store/useScoutStore'
 import { useEventStore } from '../store/useEventStore'
-import { FieldRenderer } from './FieldRenderer'
+import { FloppyDiskIcon } from '@phosphor-icons/react'
+import { FieldRenderer, fieldHint, isWideField } from './FieldRenderer'
 import { TeamPicker } from './TeamPicker'
 import { QrCode } from './QrCode'
 import { compressMatch } from '../lib/qr'
@@ -129,28 +130,25 @@ export function MatchForm() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 p-4 pb-8 text-left">
-      <div className="grid grid-cols-3 gap-3">
-        <input
-          className="rounded-lg border border-n33 bg-n215 p-3 text-fg"
-          placeholder="# Partido"
-          inputMode="numeric"
-          value={matchNumber}
-          onChange={(e) => setMatchNumber(e.target.value)}
-        />
-        <input
-          className="rounded-lg border border-n33 bg-n215 p-3 text-fg"
-          placeholder="# Equipo"
-          inputMode="numeric"
-          value={teamNumber}
-          onChange={(e) => setTeamNumber(e.target.value)}
-        />
-        <input
-          className="rounded-lg border border-n33 bg-n215 p-3 text-fg"
-          placeholder="Scout"
-          value={scoutName}
-          onChange={(e) => setScoutName(e.target.value)}
-        />
+    <div className="mx-auto max-w-4xl space-y-6 p-4 pb-8 text-left">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        {(
+          [
+            ['# Partido', matchNumber, setMatchNumber, true],
+            ['# Equipo', teamNumber, setTeamNumber, true],
+            ['Scout', scoutName, setScoutName, false],
+          ] as const
+        ).map(([label, value, set, numeric]) => (
+          <label key={label} className="min-w-0 text-[13px] font-semibold text-n75">
+            {label}
+            <input
+              className={`mt-1 h-14 w-full rounded-xl border border-n33 bg-n19 px-3 text-xl font-bold text-fg focus:outline-2 focus:outline-acc ${numeric ? 'font-mono' : ''}`}
+              inputMode={numeric ? 'numeric' : undefined}
+              value={value}
+              onChange={(e) => set(e.target.value)}
+            />
+          </label>
+        ))}
       </div>
 
       <TeamPicker value={teamNumber} onPick={setTeamNumber} />
@@ -172,30 +170,39 @@ export function MatchForm() {
       )}
 
       {phases.map((phase) => (
-        <section key={phase} className="space-y-4">
+        <section key={phase} className="space-y-3">
           <h2 className="text-sm font-bold uppercase tracking-wide text-acc-t">{phaseLabel[phase]}</h2>
-          {config.fields
-            .filter((f) => f.phase === phase)
-            .map((field) => (
-              <div key={field.id}>
-                <label className="mb-1 block text-sm text-n75">{field.label}</label>
-                <FieldRenderer
-                  field={field}
-                  value={values[field.id]}
-                  onChange={(v) => setValues((prev) => ({ ...prev, [field.id]: v }))}
-                />
-              </div>
-            ))}
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))] gap-3">
+            {config.fields
+              .filter((f) => f.phase === phase)
+              .map((field) => (
+                <div
+                  key={field.id}
+                  className={`flex min-w-0 flex-col gap-3 rounded-2xl bg-n215 p-4 ${isWideField(field) ? 'col-span-full' : ''}`}
+                >
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-base font-semibold">{field.label}</span>
+                    <span className="text-[13px] text-n75">{fieldHint(field, values[field.id])}</span>
+                  </div>
+                  <FieldRenderer
+                    field={field}
+                    value={values[field.id]}
+                    onChange={(v) => setValues((prev) => ({ ...prev, [field.id]: v }))}
+                  />
+                </div>
+              ))}
+          </div>
         </section>
       ))}
 
       {/* En el flujo normal (no "fixed"): un botón flotante sobre el campo
           tipo fieldMap le tapaba los taps en pantallas cortas (iPhone SE). */}
       <button
-        className="w-full rounded-xl bg-grn py-4 text-xl font-bold text-on-grn shadow-lg disabled:opacity-40"
+        className="flex min-h-16 w-full items-center justify-center gap-2.5 rounded-2xl bg-grn text-[19px] font-extrabold text-on-grn disabled:opacity-40"
         disabled={saving || !matchNumber.trim() || !teamNumber.trim()}
         onClick={handleSave}
       >
+        <FloppyDiskIcon size={22} weight="bold" />
         Guardar partido
       </button>
 
