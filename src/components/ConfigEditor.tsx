@@ -1,14 +1,12 @@
 import { useState } from 'react'
 import { useScoutStore } from '../store/useScoutStore'
 import { validateGameConfig, type GameConfig } from '../types/gameConfig'
-import { exampleGameConfig } from '../data/exampleGameConfig'
-import { biobuzzConfig } from '../data/biobuzzConfig'
+import { presets, withPresetPoints } from '../data/presets'
 import { loadGameConfig } from '../lib/db'
 import { TEAMS, mayaGlyphs } from '../data/team'
 import { useDisplayPrefsStore, type Accent } from '../store/useDisplayPrefsStore'
 import { MoonIcon, SunIcon } from '@phosphor-icons/react'
 
-const presets = [exampleGameConfig, biobuzzConfig]
 
 const ACCENTS: [Accent, string, string][] = [
   ['tec', 'Azul Tec', 'oklch(0.78 0.13 235)'],
@@ -62,7 +60,8 @@ export function ConfigEditor() {
 
   async function loadPreset(preset: GameConfig) {
     // Si ya se usó antes, retoma su versión guardada (con las ediciones que se le hayan hecho)
-    const next = (await loadGameConfig(preset.gameId)) ?? preset
+    const stored = await loadGameConfig(preset.gameId)
+    const next = stored ? withPresetPoints(stored) : preset
     if (confirmIfHidesData(next)) {
       setText(JSON.stringify(next, null, 2))
       setConfig(next)

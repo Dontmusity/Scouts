@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { GameConfig } from '../types/gameConfig'
 import { exampleGameConfig } from '../data/exampleGameConfig'
+import { withPresetPoints } from '../data/presets'
 import { useEventStore } from './useEventStore'
 import { useNexusStore } from './useNexusStore'
 import {
@@ -33,7 +34,7 @@ export const useScoutStore = create<ScoutState>((set, get) => ({
     // Recordar el último gameId aplicado; si no, al recargar volvía siempre al config por defecto
     const activeId = localStorage.getItem(ACTIVE_GAME_KEY) ?? exampleGameConfig.gameId
     const stored = (await loadGameConfig(activeId)) ?? (await loadGameConfig(exampleGameConfig.gameId))
-    const config = stored ?? exampleGameConfig
+    const config = stored ? withPresetPoints(stored) : exampleGameConfig
     if (!stored) await saveGameConfig(exampleGameConfig)
     const matches = await listMatches(config.gameId)
     set({ config, matches, loaded: true })

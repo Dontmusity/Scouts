@@ -29,6 +29,11 @@ export interface BaseField {
    * Nunca sobreescribe un valor que el scout ya haya escrito a mano.
    */
   autofill?: 'ally' | 'score' | 'opponentScore' | 'breakdownOwn' | 'breakdownOpponent'
+  /**
+   * Puntos que vale (por unidad en contador/número, por "Sí" en toggle) — solo para el
+   * "pts estimados" del resumen en Scouting. Opcional: sin él, el campo no suma.
+   */
+  points?: number
   /** Clave a leer del desglose oficial — solo se usa con autofill 'breakdownOwn'/'breakdownOpponent'. */
   breakdownKey?: string
 }
@@ -146,6 +151,7 @@ export function validateGameConfig(parsed: unknown): GameConfig {
       throw new Error(`${at}: un fieldMap necesita "imageUrl" (texto).`)
     if (f.type === 'rating' && f.max !== undefined && typeof f.max !== 'number')
       throw new Error(`${at}: "max" debe ser un número.`)
+    if (f.points !== undefined && typeof f.points !== 'number') throw new Error(`${at}: "points" debe ser un número.`)
     if (f.type === 'counter') {
       for (const k of ['min', 'max', 'step'] as const) {
         if (f[k] !== undefined && typeof f[k] !== 'number') throw new Error(`${at}: "${k}" debe ser un número.`)
