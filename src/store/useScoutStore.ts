@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { GameConfig } from '../types/gameConfig'
 import { exampleGameConfig } from '../data/exampleGameConfig'
 import { useEventStore } from './useEventStore'
+import { useNexusStore } from './useNexusStore'
 import {
   saveGameConfig,
   loadGameConfig,
@@ -43,6 +44,7 @@ export const useScoutStore = create<ScoutState>((set, get) => ({
     // sincronizado aparecían en FTC (sugerencias, nombres, pit, autocompletado)
     if (config.mode !== get().config.mode) {
       useEventStore.setState({ teams: [], rankings: [], matches: [], lastSyncedAt: null, error: null, scheduleError: null })
+      useNexusStore.setState({ eventKey: '', matches: [], pits: {}, announcements: [], dataAsOfTime: null, raw: null, lastSyncedAt: null, error: null })
     }
     await saveGameConfig(config)
     localStorage.setItem(ACTIVE_GAME_KEY, config.gameId)

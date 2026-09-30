@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNexusStore } from '../store/useNexusStore'
+import { nexusHost } from '../lib/nexusApi'
 
 const input = 'w-full rounded-lg border border-slate-700 bg-slate-800 p-3 text-white'
 
@@ -25,8 +26,8 @@ export function NexusPanel() {
       <input className={input} value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="Nexus-Api-Key" />
       <p className="text-xs text-slate-500">
         Se obtiene en{' '}
-        <a className="text-sky-400 underline" href="https://frc.nexus/api" target="_blank" rel="noreferrer">
-          frc.nexus/api
+        <a className="text-sky-400 underline" href={`https://${nexusHost()}/api`} target="_blank" rel="noreferrer">
+          {nexusHost()}/api
         </a>{' '}
         (iniciar sesión con Google). Se guarda solo en este dispositivo.
       </p>

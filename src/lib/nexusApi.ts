@@ -10,10 +10,13 @@
  * cruda en la pestaña Eventos para poder ajustar esto en el evento real.
  */
 
-const BASE = 'https://frc.nexus/api/v1'
+import { useScoutStore } from '../store/useScoutStore'
+
+/** frc.nexus o ftc.nexus según la liga activa — misma API en ambos. */
+export const nexusHost = () => (useScoutStore.getState().config.mode === 'FTC' ? 'ftc.nexus' : 'frc.nexus')
 
 async function nexusGet<T>(path: string, apiKey: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { headers: { 'Nexus-Api-Key': apiKey } })
+  const res = await fetch(`https://${nexusHost()}/api/v1${path}`, { headers: { 'Nexus-Api-Key': apiKey } })
   const body = await res.text()
   if (!res.ok) {
     // Nexus responde con un string JSON explicando el problema.
@@ -25,7 +28,7 @@ async function nexusGet<T>(path: string, apiKey: string): Promise<T> {
       /* no era JSON; se usa el texto crudo */
     }
     if (res.status === 401 || res.status === 403) {
-      throw new Error('Llave de Nexus inválida o faltante. Revísala en frc.nexus/api.')
+      throw new Error(`Llave de Nexus inválida o faltante. Revísala en ${nexusHost()}/api.`)
     }
     throw new Error(msg || `Nexus ${res.status}`)
   }
