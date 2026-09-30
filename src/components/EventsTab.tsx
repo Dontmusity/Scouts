@@ -89,7 +89,7 @@ export function EventsTab() {
         </div>
       )}
 
-      <NexusPanel />
+      {mode === 'FRC' && <NexusPanel />}
 
       {rankings.length > 0 && (
         <div>

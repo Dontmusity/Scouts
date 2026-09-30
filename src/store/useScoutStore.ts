@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { GameConfig } from '../types/gameConfig'
 import { exampleGameConfig } from '../data/exampleGameConfig'
+import { useEventStore } from './useEventStore'
 import {
   saveGameConfig,
   loadGameConfig,
@@ -38,6 +39,11 @@ export const useScoutStore = create<ScoutState>((set, get) => ({
   },
 
   setConfig: async (config) => {
+    // FRC y FTC son ligas distintas: sin esto, equipos/cronograma del evento FRC
+    // sincronizado aparecían en FTC (sugerencias, nombres, pit, autocompletado)
+    if (config.mode !== get().config.mode) {
+      useEventStore.setState({ teams: [], rankings: [], matches: [], lastSyncedAt: null, error: null, scheduleError: null })
+    }
     await saveGameConfig(config)
     localStorage.setItem(ACTIVE_GAME_KEY, config.gameId)
     const matches = await listMatches(config.gameId)
