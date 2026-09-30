@@ -66,7 +66,7 @@ export function Dashboard() {
   // (partidos oficiales jugados) — solo si no hay ninguna de las dos fuentes no hay nada que mostrar.
   if (stats.length === 0 && oprTeams.length === 0) {
     return (
-      <p className="p-8 text-center text-slate-500">
+      <p className="p-8 text-center text-n60">
         {eventMatches.length > 0
           ? `El cronograma está sincronizado (${eventMatches.length} partidos) pero ninguno tiene resultado oficial publicado todavía — vuelve a sincronizar cuando el evento reporte partidos jugados.`
           : 'Aún no hay partidos escaneados ni un evento sincronizado con resultados para analizar.'}
@@ -78,14 +78,14 @@ export function Dashboard() {
     <div className="mx-auto max-w-2xl space-y-8 p-4 pb-16 text-left">
       {stats.length > 0 && (
         <section>
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">Promedio por equipo (escaneado)</h2>
+          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">Promedio por equipo (escaneado)</h2>
           <TeamStatsChart teams={scoutedTeams} />
         </section>
       )}
 
       {oprTeams.length > 0 && (
         <section>
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">
+          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">
             OPR del evento (partidos oficiales sincronizados)
           </h2>
           <TeamStatsChart teams={oprTeams} />
@@ -94,7 +94,7 @@ export function Dashboard() {
 
       {(stats.length > 0 || officialConsistency.length > 0) && (
         <section>
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">
+          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">
             Consistencia (desviación estándar — menor es más consistente)
           </h2>
           <ConsistencyChart
@@ -108,7 +108,7 @@ export function Dashboard() {
           PickList justo cuando el evento recién se sincronizó. */}
       {(stats.length > 0 || oprTeams.length > 0) && (
         <section>
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">
+          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">
             PickList (arrastra en desktop o usa el selector en el celular)
           </h2>
           <Picklist teams={stats.length > 0 ? scoutedTeams : oprTeams} eventId={eventId} />
@@ -116,7 +116,7 @@ export function Dashboard() {
       )}
 
       <section>
-        <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-sky-400">Predicción de partido</h2>
+        <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">Predicción de partido</h2>
         <MatchPredictor scoutedTeams={scoutedTeams} oprTeams={oprTeams} allianceSize={config.mode === 'FRC' ? 3 : 2} />
       </section>
     </div>

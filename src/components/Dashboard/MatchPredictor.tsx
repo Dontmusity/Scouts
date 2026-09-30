@@ -24,11 +24,11 @@ function AllianceSelect({
 }) {
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-bold uppercase tracking-wide text-slate-400">{label}</h3>
+      <h3 className="text-sm font-bold uppercase tracking-wide text-n72">{label}</h3>
       {slots.map((value, i) => (
         <select
           key={i}
-          className="w-full rounded-lg border border-slate-700 bg-slate-800 p-2 text-white"
+          className="w-full rounded-lg border border-n33 bg-n215 p-2 text-fg"
           value={value}
           onChange={(e) => onChange(i, e.target.value)}
         >
@@ -86,14 +86,14 @@ export function MatchPredictor({
 
   return (
     <div className="space-y-4">
-      <div className="flex rounded-lg bg-slate-800 p-1 text-sm">
+      <div className="flex rounded-lg bg-n215 p-1 text-sm">
         <button
           type="button"
           onClick={() => {
             setSource('scouted')
             setSourceTouched(true)
           }}
-          className={`rounded-md px-3 py-1.5 font-semibold ${source === 'scouted' ? 'bg-sky-600 text-white' : 'text-slate-400'}`}
+          className={`rounded-md px-3 py-1.5 font-semibold ${source === 'scouted' ? 'bg-acc text-on-acc' : 'text-n72'}`}
         >
           Promedio escaneado
         </button>
@@ -104,13 +104,13 @@ export function MatchPredictor({
             setSourceTouched(true)
           }}
           disabled={oprTeams.length === 0}
-          className={`rounded-md px-3 py-1.5 font-semibold disabled:opacity-40 ${source === 'opr' ? 'bg-sky-600 text-white' : 'text-slate-400'}`}
+          className={`rounded-md px-3 py-1.5 font-semibold disabled:opacity-40 ${source === 'opr' ? 'bg-acc text-on-acc' : 'text-n72'}`}
         >
           OPR del evento
         </button>
       </div>
       {source === 'opr' && oprTeams.length === 0 && (
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-n60">
           ℹ️ Sin partidos oficiales jugados sincronizados — sincroniza el evento en la pestaña Eventos para calcular OPR.
         </p>
       )}
@@ -133,21 +133,21 @@ export function MatchPredictor({
       </div>
 
       {hasPicks && (
-        <div className="rounded-lg bg-slate-800 p-4 text-center">
+        <div className="rounded-lg bg-n215 p-4 text-center">
           <p className="text-2xl font-bold">
-            <span className={redScore >= blueScore ? 'text-red-400' : 'text-slate-500'}>{redScore.toFixed(1)}</span>
+            <span className={redScore >= blueScore ? 'text-bad' : 'text-n60'}>{redScore.toFixed(1)}</span>
             {' — '}
-            <span className={blueScore >= redScore ? 'text-blue-400' : 'text-slate-500'}>{blueScore.toFixed(1)}</span>
+            <span className={blueScore >= redScore ? 'text-blu' : 'text-n60'}>{blueScore.toFixed(1)}</span>
           </p>
-          <div className="mx-auto mt-3 h-2 max-w-xs overflow-hidden rounded-full bg-blue-500">
-            <div className="h-full bg-red-500" style={{ width: `${redWinPct.toFixed(1)}%` }} />
+          <div className="mx-auto mt-3 h-2 max-w-xs overflow-hidden rounded-full bg-blu">
+            <div className="h-full bg-bad" style={{ width: `${redWinPct.toFixed(1)}%` }} />
           </div>
           <p className="mt-2 text-sm font-bold">
-            <span className="text-red-400">{redWinPct.toFixed(0)}%</span>
+            <span className="text-bad">{redWinPct.toFixed(0)}%</span>
             {' — '}
-            <span className="text-blue-400">{(100 - redWinPct).toFixed(0)}%</span>
+            <span className="text-blu">{(100 - redWinPct).toFixed(0)}%</span>
           </p>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-n72">
             {source === 'opr'
               ? 'Predicción basada en OPR (mínimos cuadrados sobre los partidos oficiales jugados).'
               : 'Predicción basada en el promedio agregado de puntos escaneados por equipo.'}

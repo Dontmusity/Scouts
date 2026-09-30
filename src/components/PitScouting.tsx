@@ -42,10 +42,10 @@ export function PitScouting() {
 
   return (
     <div className="mx-auto max-w-2xl p-4 pb-8">
-      <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-sky-400">Pit Scouting</h2>
+      <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-acc-t">Pit Scouting</h2>
 
       {teams.length === 0 && (
-        <p className="text-center text-slate-500">
+        <p className="text-center text-n60">
           Sin equipos todavía. Sincroniza un evento en la pestaña Eventos o escanea partidos.
         </p>
       )}
@@ -56,17 +56,17 @@ export function PitScouting() {
           return (
             <button
               key={team.teamNumber}
-              className="flex flex-col items-start gap-1 rounded-xl bg-slate-800 p-3 text-left active:scale-95"
+              className="flex flex-col items-start gap-1 rounded-xl bg-n215 p-3 text-left active:scale-95"
               onClick={() => setActiveTeam(team)}
             >
-              <span className="text-lg font-bold text-white">{team.teamNumber}</span>
-              {team.name && <span className="truncate text-xs text-slate-400">{team.name}</span>}
+              <span className="text-lg font-bold text-fg">{team.teamNumber}</span>
+              {team.name && <span className="truncate text-xs text-n72">{team.name}</span>}
               {pitLocations[team.teamNumber] && (
-                <span className="truncate text-xs font-bold text-sky-400">📍 {pitLocations[team.teamNumber]}</span>
+                <span className="truncate text-xs font-bold text-acc-t">📍 {pitLocations[team.teamNumber]}</span>
               )}
               <span
                 className={`mt-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                  scouted ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-400'
+                  scouted ? 'bg-grn text-on-grn' : 'bg-n27 text-n72'
                 }`}
               >
                 {scouted ? '✓ Escuteado' : 'Sin escutear'}
@@ -128,22 +128,22 @@ function PitForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-slate-950 p-4">
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-n12 p-4">
       <div className="mx-auto w-full max-w-2xl space-y-6 pb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-white">Equipo {team.teamNumber}</h3>
-            {team.name && <p className="text-sm text-slate-400">{team.name}</p>}
-            {pitLocation && <p className="text-sm font-bold text-sky-400">📍 Pit {pitLocation}</p>}
+            <h3 className="text-xl font-bold text-fg">Equipo {team.teamNumber}</h3>
+            {team.name && <p className="text-sm text-n72">{team.name}</p>}
+            {pitLocation && <p className="text-sm font-bold text-acc-t">📍 Pit {pitLocation}</p>}
           </div>
-          <button className="rounded-lg bg-slate-700 px-3 py-2 font-bold text-white" onClick={onClose}>
+          <button className="rounded-lg bg-n27 px-3 py-2 font-bold text-fg" onClick={onClose}>
             Cerrar
           </button>
         </div>
 
         {fields.map((field) => (
           <div key={field.id}>
-            <label className="mb-1 block text-sm text-slate-300">{field.label}</label>
+            <label className="mb-1 block text-sm text-n75">{field.label}</label>
             <FieldRenderer
               field={field}
               value={values[field.id]}
@@ -153,7 +153,7 @@ function PitForm({
         ))}
 
         <button
-          className="w-full rounded-xl bg-emerald-600 py-4 text-xl font-bold text-white shadow-lg disabled:opacity-40"
+          className="w-full rounded-xl bg-grn py-4 text-xl font-bold text-on-grn shadow-lg disabled:opacity-40"
           disabled={saving}
           onClick={handleSave}
         >

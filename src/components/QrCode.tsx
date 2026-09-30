@@ -23,11 +23,11 @@ export function QrCode({ text }: { text: string }) {
 
   if (error) {
     return (
-      <p className="max-w-xs rounded-lg bg-red-950 p-4 text-center text-sm font-bold text-red-300">
+      <p className="max-w-xs rounded-lg bg-bad-t p-4 text-center text-sm font-bold text-bad">
         Los datos son demasiado grandes para un QR. Usa la sincronización por Wi-Fi o la exportación JSON.
       </p>
     )
   }
-  if (!src) return <div className="h-80 w-80 animate-pulse rounded-lg bg-slate-800" />
+  if (!src) return <div className="h-80 w-80 animate-pulse rounded-lg bg-n215" />
   return <img src={src} alt="QR" className="mx-auto rounded-lg bg-white p-2" />
 }

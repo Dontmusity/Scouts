@@ -77,34 +77,34 @@ export function MatchList() {
     <div className="mx-auto max-w-2xl space-y-4 p-4 text-left">
       <div className="flex flex-wrap gap-2">
         <button
-          className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white"
+          className="rounded-lg bg-n27 px-3 py-2 text-sm font-bold text-fg"
           onClick={() => download(`${config.gameId}-matches.json`, JSON.stringify(matches, null, 2), 'application/json')}
         >
           Exportar JSON
         </button>
         <button
-          className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white"
+          className="rounded-lg bg-n27 px-3 py-2 text-sm font-bold text-fg"
           onClick={() => download(`${config.gameId}-matches.csv`, toCsv(matches, fieldIds), 'text/csv')}
         >
           Exportar CSV
         </button>
-        <button className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white" onClick={handleCopy}>
+        <button className="rounded-lg bg-n27 px-3 py-2 text-sm font-bold text-fg" onClick={handleCopy}>
           {copied ? '✓ Copiado' : 'Copiar al portapapeles'}
         </button>
         <button
-          className="rounded-lg bg-sky-600 px-3 py-2 text-sm font-bold text-white"
+          className="rounded-lg bg-acc px-3 py-2 text-sm font-bold text-on-acc"
           onClick={() => fileRef.current?.click()}
         >
           Importar JSON
         </button>
         <button
-          className="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-bold text-white"
+          className="rounded-lg bg-grn px-3 py-2 text-sm font-bold text-on-grn"
           onClick={() => setScanning(true)}
         >
           📷 Escanear QR (pit/central)
         </button>
         <button
-          className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-bold text-white"
+          className="rounded-lg bg-n27 px-3 py-2 text-sm font-bold text-fg"
           onClick={() => setSyncing(true)}
         >
           📶 Sincronizar por Wi-Fi{syncStatus === 'connected' ? ' · ● Conectado' : ''}
@@ -118,25 +118,25 @@ export function MatchList() {
         />
       </div>
 
-      {importMsg && <p className="text-sm font-bold text-slate-300">{importMsg}</p>}
+      {importMsg && <p className="text-sm font-bold text-n75">{importMsg}</p>}
 
-      <p className="text-sm text-slate-400">{matches.length} partidos guardados localmente.</p>
+      <p className="text-sm text-n72">{matches.length} partidos guardados localmente.</p>
 
       <ul className="space-y-2">
         {matches
           .slice()
           .reverse()
           .map((m) => (
-            <li key={m.id} className="flex items-center justify-between rounded-lg bg-slate-800 p-3">
-              <span className="text-white">
+            <li key={m.id} className="flex items-center justify-between rounded-lg bg-n215 p-3">
+              <span className="text-fg">
                 Partido {m.matchNumber} · Equipo {m.teamNumber}{' '}
-                <span className="text-slate-400">({m.scoutName || 'sin scout'})</span>
+                <span className="text-n72">({m.scoutName || 'sin scout'})</span>
               </span>
               <span className="flex gap-3">
-                <button className="text-sm font-bold text-sky-400" onClick={() => setQrMatch(m)}>
+                <button className="text-sm font-bold text-acc-t" onClick={() => setQrMatch(m)}>
                   QR
                 </button>
-                <button className="text-sm font-bold text-red-400" onClick={() => removeMatch(m.id)}>
+                <button className="text-sm font-bold text-bad" onClick={() => removeMatch(m.id)}>
                   Eliminar
                 </button>
               </span>
@@ -145,12 +145,12 @@ export function MatchList() {
       </ul>
 
       {qrMatch && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-slate-950/95 p-4">
-          <p className="text-white">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-n12/95 p-4">
+          <p className="text-fg">
             Partido {qrMatch.matchNumber} · Equipo {qrMatch.teamNumber}
           </p>
           <QrCode text={compressMatch(qrMatch)} />
-          <button className="rounded-lg bg-slate-700 px-4 py-2 font-bold text-white" onClick={() => setQrMatch(null)}>
+          <button className="rounded-lg bg-n27 px-4 py-2 font-bold text-fg" onClick={() => setQrMatch(null)}>
             Cerrar
           </button>
         </div>

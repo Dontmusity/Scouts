@@ -132,21 +132,21 @@ export function MatchForm() {
     <div className="mx-auto max-w-2xl space-y-6 p-4 pb-8 text-left">
       <div className="grid grid-cols-3 gap-3">
         <input
-          className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-lg border border-n33 bg-n215 p-3 text-fg"
           placeholder="# Partido"
           inputMode="numeric"
           value={matchNumber}
           onChange={(e) => setMatchNumber(e.target.value)}
         />
         <input
-          className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-lg border border-n33 bg-n215 p-3 text-fg"
           placeholder="# Equipo"
           inputMode="numeric"
           value={teamNumber}
           onChange={(e) => setTeamNumber(e.target.value)}
         />
         <input
-          className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-lg border border-n33 bg-n215 p-3 text-fg"
           placeholder="Scout"
           value={scoutName}
           onChange={(e) => setScoutName(e.target.value)}
@@ -156,7 +156,7 @@ export function MatchForm() {
       <TeamPicker value={teamNumber} onPick={setTeamNumber} />
 
       {autofilled && (
-        <p className="text-xs font-bold text-emerald-400">
+        <p className="text-xs font-bold text-grn">
           🔗 Aliados y puntaje autocompletados desde el partido oficial sincronizado.
         </p>
       )}
@@ -164,7 +164,7 @@ export function MatchForm() {
       {/* Sin esto, el autocompletado simplemente no pasaba y el scout no tenía
           forma de saber si era un dato mal escrito o un evento sin sincronizar. */}
       {!autofilled && matchNumber.trim() && teamNumber.trim() && (
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-n60">
           {eventMatches.length === 0
             ? 'ℹ️ Sin cronograma sincronizado — sincroniza el evento en la pestaña Eventos para autocompletar aliados y puntaje.'
             : `ℹ️ El Partido ${matchNumber.trim()} con el Equipo ${teamNumber.trim()} no está en el cronograma sincronizado (${eventMatches.length} partidos de calificación). Revisa los números o vuelve a sincronizar.`}
@@ -173,12 +173,12 @@ export function MatchForm() {
 
       {phases.map((phase) => (
         <section key={phase} className="space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-sky-400">{phaseLabel[phase]}</h2>
+          <h2 className="text-sm font-bold uppercase tracking-wide text-acc-t">{phaseLabel[phase]}</h2>
           {config.fields
             .filter((f) => f.phase === phase)
             .map((field) => (
               <div key={field.id}>
-                <label className="mb-1 block text-sm text-slate-300">{field.label}</label>
+                <label className="mb-1 block text-sm text-n75">{field.label}</label>
                 <FieldRenderer
                   field={field}
                   value={values[field.id]}
@@ -192,7 +192,7 @@ export function MatchForm() {
       {/* En el flujo normal (no "fixed"): un botón flotante sobre el campo
           tipo fieldMap le tapaba los taps en pantallas cortas (iPhone SE). */}
       <button
-        className="w-full rounded-xl bg-emerald-600 py-4 text-xl font-bold text-white shadow-lg disabled:opacity-40"
+        className="w-full rounded-xl bg-grn py-4 text-xl font-bold text-on-grn shadow-lg disabled:opacity-40"
         disabled={saving || !matchNumber.trim() || !teamNumber.trim()}
         onClick={handleSave}
       >
@@ -200,16 +200,16 @@ export function MatchForm() {
       </button>
 
       {savedMatch && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-slate-950/95 p-4">
-          <p className="text-xl font-bold text-white">✓ Guardado</p>
-          <p className="text-slate-300">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-n12/95 p-4">
+          <p className="text-xl font-bold text-fg">✓ Guardado</p>
+          <p className="text-n75">
             Partido {savedMatch.matchNumber} · Equipo {savedMatch.teamNumber}
           </p>
           <QrCode text={compressMatch(savedMatch)} />
-          <p className="max-w-xs text-center text-xs text-slate-500">
+          <p className="max-w-xs text-center text-xs text-n60">
             Muestra este código al escáner en pit/central para transferirlo sin Wi-Fi.
           </p>
-          <button className="rounded-lg bg-slate-700 px-4 py-2 font-bold text-white" onClick={() => setSavedMatch(null)}>
+          <button className="rounded-lg bg-n27 px-4 py-2 font-bold text-fg" onClick={() => setSavedMatch(null)}>
             Cerrar
           </button>
         </div>

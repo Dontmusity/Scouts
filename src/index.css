@@ -1,10 +1,108 @@
 @import "tailwindcss";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "@fontsource/noto-sans-mayan-numerals/400.css";
+
+/* Tokens del rediseño (design_handoff_scouting_taman_keet). data-tk = tema, data-acc = acento del programa activo. */
+[data-tk=dark]{--n10:oklch(0.1 0.01 250);--n12:oklch(0.12 0.01 250);--n13:oklch(0.13 0.01 250);--n14:oklch(0.14 0.012 250);--n16:oklch(0.16 0.012 250);--n165:oklch(0.165 0.012 250);--n18:oklch(0.18 0.012 250);--n19:oklch(0.19 0.013 250);--n20:oklch(0.2 0.013 250);--n215:oklch(0.215 0.014 250);--n24:oklch(0.24 0.014 250);--n26:oklch(0.26 0.016 250);--n27:oklch(0.27 0.016 250);--n30:oklch(0.3 0.016 250);--n33:oklch(0.33 0.016 250);--n60:oklch(0.6 0.015 250);--n72:oklch(0.72 0.02 250);--n75:oklch(0.75 0.015 250);--n97:oklch(0.97 0.005 250);--grn:oklch(0.75 0.16 150);--on-grn:oklch(0.2 0.05 150);--grn-2:oklch(0.68 0.16 150);--red:oklch(0.66 0.19 25);--red-t:oklch(0.3 0.08 25);--red-t2:oklch(0.22 0.05 25);--red-t3:oklch(0.15 0.02 25);--blu:oklch(0.66 0.17 268);--blu-t:oklch(0.3 0.08 268);--blu-t2:oklch(0.22 0.05 268);color-scheme:dark}
+[data-tk=light]{--n10:oklch(0.9 0.006 250);--n12:oklch(0.92 0.006 250);--n13:oklch(0.93 0.006 250);--n14:oklch(0.955 0.005 250);--n16:oklch(0.95 0.006 250);--n165:oklch(0.975 0.004 250);--n18:oklch(0.96 0.005 250);--n19:oklch(0.965 0.005 250);--n20:oklch(0.97 0.005 250);--n215:oklch(0.995 0.002 250);--n24:oklch(0.93 0.006 250);--n26:oklch(0.92 0.007 250);--n27:oklch(0.935 0.007 250);--n30:oklch(0.88 0.008 250);--n33:oklch(0.86 0.009 250);--n60:oklch(0.56 0.015 250);--n72:oklch(0.5 0.018 250);--n75:oklch(0.46 0.018 250);--n97:oklch(0.2 0.015 250);--grn:oklch(0.56 0.15 150);--on-grn:oklch(0.99 0.01 150);--grn-2:oklch(0.5 0.14 150);--red:oklch(0.56 0.2 25);--red-t:oklch(0.93 0.04 25);--red-t2:oklch(0.96 0.02 25);--red-t3:oklch(0.97 0.015 25);--blu:oklch(0.5 0.2 268);--blu-t:oklch(0.93 0.04 268);--blu-t2:oklch(0.96 0.02 268);color-scheme:light}
+[data-tk=dark][data-acc=tec]{--acc:oklch(0.78 0.13 235);--on-acc:oklch(0.2 0.04 235);--acc-hi:oklch(0.86 0.09 235);--acc-2:oklch(0.72 0.13 235)}
+[data-tk=light][data-acc=tec]{--acc:oklch(0.52 0.15 245);--on-acc:oklch(0.99 0.005 245);--acc-hi:oklch(0.44 0.14 245);--acc-2:oklch(0.48 0.14 245)}
+[data-tk=dark][data-acc=ambar]{--acc:oklch(0.86 0.16 95);--on-acc:oklch(0.22 0.04 95);--acc-hi:oklch(0.93 0.1 95);--acc-2:oklch(0.78 0.16 95)}
+[data-tk=light][data-acc=ambar]{--acc:oklch(0.74 0.16 80);--on-acc:oklch(0.22 0.04 80);--acc-hi:oklch(0.6 0.14 70);--acc-2:oklch(0.66 0.15 75)}
+[data-tk=dark][data-acc=jade]{--acc:oklch(0.8 0.13 175);--on-acc:oklch(0.2 0.04 175);--acc-hi:oklch(0.88 0.08 175);--acc-2:oklch(0.72 0.13 175)}
+[data-tk=light][data-acc=jade]{--acc:oklch(0.52 0.11 175);--on-acc:oklch(0.99 0.005 175);--acc-hi:oklch(0.44 0.1 175);--acc-2:oklch(0.48 0.11 175)}
+[data-tk=dark][data-acc=magenta]{--acc:oklch(0.76 0.17 340);--on-acc:oklch(0.2 0.05 340);--acc-hi:oklch(0.85 0.1 340);--acc-2:oklch(0.7 0.17 340)}
+[data-tk=light][data-acc=magenta]{--acc:oklch(0.52 0.2 340);--on-acc:oklch(0.99 0.005 340);--acc-hi:oklch(0.44 0.18 340);--acc-2:oklch(0.48 0.19 340)}
+[data-acc=tec]{--hue:245}
+[data-tk=light][data-acc=tec]{--brand:oklch(0.5 0.16 250)}
+[data-tk=dark][data-acc=tec]{--brand:oklch(0.42 0.13 250)}
+[data-acc=ambar]{--hue:70}
+[data-tk=light][data-acc=ambar]{--brand:oklch(0.52 0.13 55)}
+[data-tk=dark][data-acc=ambar]{--brand:oklch(0.44 0.11 55)}
+[data-acc=jade]{--hue:175}
+[data-tk=light][data-acc=jade]{--brand:oklch(0.5 0.1 180)}
+[data-tk=dark][data-acc=jade]{--brand:oklch(0.4 0.08 180)}
+[data-acc=magenta]{--hue:340}
+[data-tk=light][data-acc=magenta]{--brand:oklch(0.5 0.19 340)}
+[data-tk=dark][data-acc=magenta]{--brand:oklch(0.42 0.16 340)}
+[data-tk=light]{--n165:oklch(0.968 0.016 var(--hue));--n12:oklch(0.9 0.03 var(--hue));--n14:oklch(0.95 0.02 var(--hue));--n19:oklch(0.952 0.02 var(--hue));--n20:oklch(0.958 0.018 var(--hue));--n27:oklch(0.922 0.024 var(--hue));--n24:oklch(0.918 0.026 var(--hue));--n30:oklch(0.87 0.03 var(--hue));--n33:oklch(0.85 0.035 var(--hue));--n75:oklch(0.45 0.04 var(--hue));--n97:oklch(0.22 0.04 var(--hue))}
+[data-tk=dark]{--n165:oklch(0.175 0.022 var(--hue));--n14:oklch(0.15 0.02 var(--hue));--n215:oklch(0.23 0.026 var(--hue));--n27:oklch(0.29 0.03 var(--hue));--n24:oklch(0.26 0.028 var(--hue));--n33:oklch(0.35 0.03 var(--hue));--n19:oklch(0.2 0.024 var(--hue))}
+[data-chrome]{--acc-t:oklch(0.99 0.005 var(--hue));--n14:var(--brand);--n97:oklch(0.99 0.005 var(--hue));--n75:oklch(0.9 0.04 var(--hue));--n60:oklch(0.85 0.05 var(--hue));--acc:oklch(0.99 0.005 var(--hue));--on-acc:var(--brand);--n27:color-mix(in oklch, white 20%, var(--brand));--n24:color-mix(in oklch, white 14%, var(--brand));--n215:color-mix(in oklch, white 12%, var(--brand));--n33:color-mix(in oklch, white 30%, var(--brand));--grn:oklch(0.9 0.12 150);color:var(--n97)}
+[data-tk=dark]{--acc-t:var(--acc)}
+[data-tk=light][data-acc=tec]{--acc-t:oklch(0.46 0.15 245)}
+[data-tk=light][data-acc=ambar]{--acc-t:oklch(0.5 0.12 65)}
+[data-tk=light][data-acc=jade]{--acc-t:oklch(0.46 0.1 175)}
+[data-tk=light][data-acc=magenta]{--acc-t:oklch(0.48 0.19 340)}
+
+/* Advertencias (ámbar) — no estaba en los tokens del handoff */
+[data-tk=dark]{--warn:oklch(0.82 0.15 85);--warn-t:oklch(0.3 0.07 85)}
+[data-tk=light]{--warn:oklch(0.55 0.13 70);--warn-t:oklch(0.94 0.05 85)}
+
+/* Nombres semánticos para Tailwind: bg-n215, text-fg, bg-acc, text-on-acc… */
+@theme inline {
+  --breakpoint-desk: 67.5rem;
+  --font-sans: "Archivo Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-n12: var(--n12);
+  --color-n14: var(--n14);
+  --color-n165: var(--n165);
+  --color-n19: var(--n19);
+  --color-n215: var(--n215);
+  --color-n24: var(--n24);
+  --color-n27: var(--n27);
+  --color-n33: var(--n33);
+  --color-n60: var(--n60);
+  --color-n72: var(--n72);
+  --color-n75: var(--n75);
+  --color-fg: var(--n97);
+  --color-acc: var(--acc);
+  --color-acc-t: var(--acc-t);
+  --color-on-acc: var(--on-acc);
+  --color-brand: var(--brand);
+  --color-grn: var(--grn);
+  --color-on-grn: var(--on-grn);
+  --color-bad: var(--red);
+  --color-bad-t: var(--red-t);
+  --color-blu: var(--blu);
+  --color-blu-t: var(--blu-t);
+  --color-warn: var(--warn);
+  --color-warn-t: var(--warn-t);
+}
 
 html {
-  color-scheme: dark;
+  background: var(--n12);
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
-  background: #0f172a;
+  font-family: var(--font-sans);
+  color: var(--n97);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--n60);
+}
+
+.tk-maya {
+  font-family: "Noto Sans Mayan Numerals", serif;
+  line-height: 1;
+}
+
+/* Números de marca en contorno */
+.tk-outline {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1.5px currentColor;
+  font-weight: 800;
+  font-stretch: 62%;
+  line-height: 0.85;
+}
+
+@keyframes tkspin {
+  to {
+    transform: rotate(360deg);
+  }
 }

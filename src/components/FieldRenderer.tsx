@@ -21,14 +21,14 @@ export function FieldRenderer({ field, value, onChange }: Props) {
       return (
         <div className="flex items-center gap-3">
           <button
-            className={`${btn} bg-slate-700 text-white`}
+            className={`${btn} bg-n27 text-fg`}
             onClick={() => onChange(Math.max(min, n - step))}
           >
             −
           </button>
-          <span className="w-12 text-center text-2xl font-bold text-white">{n}</span>
+          <span className="w-12 text-center text-2xl font-bold text-fg">{n}</span>
           <button
-            className={`${btn} bg-sky-600 text-white`}
+            className={`${btn} bg-acc text-on-acc`}
             onClick={() => onChange(Math.min(max, n + step))}
           >
             +
@@ -41,7 +41,7 @@ export function FieldRenderer({ field, value, onChange }: Props) {
       const on = value === true
       return (
         <button
-          className={`${btn} w-full ${on ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-300'}`}
+          className={`${btn} w-full ${on ? 'bg-grn text-on-grn' : 'bg-n27 text-n75'}`}
           onClick={() => onChange(!on)}
         >
           {on ? 'Sí' : 'No'}
@@ -57,7 +57,7 @@ export function FieldRenderer({ field, value, onChange }: Props) {
           {(field.options ?? []).map((opt) => (
             <button
               key={opt}
-              className={`${btn} ${current === opt ? 'bg-sky-600 text-white' : 'bg-slate-700 text-slate-300'}`}
+              className={`${btn} ${current === opt ? 'bg-acc text-on-acc' : 'bg-n27 text-n75'}`}
               onClick={() => onChange(opt)}
             >
               {opt}
@@ -75,7 +75,7 @@ export function FieldRenderer({ field, value, onChange }: Props) {
           {Array.from({ length: max }, (_, i) => i + 1).map((i) => (
             <button
               key={i}
-              className={`${btn} h-12 w-12 !p-0 ${i <= n ? 'bg-amber-500 text-white' : 'bg-slate-700 text-slate-300'}`}
+              className={`${btn} h-12 w-12 !p-0 ${i <= n ? 'bg-acc text-on-acc' : 'bg-n27 text-n75'}`}
               onClick={() => onChange(i)}
             >
               {i}
@@ -89,7 +89,7 @@ export function FieldRenderer({ field, value, onChange }: Props) {
       const [x, y] = typeof value === 'string' && value ? value.split(',').map(Number) : [null, null]
       return (
         <div
-          className="relative w-full max-w-sm cursor-crosshair overflow-hidden rounded-lg border border-slate-700"
+          className="relative w-full max-w-sm cursor-crosshair overflow-hidden rounded-lg border border-n33"
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect()
             const px = ((e.clientX - rect.left) / rect.width) * 100
@@ -112,7 +112,7 @@ export function FieldRenderer({ field, value, onChange }: Props) {
       const s = typeof value === 'string' ? value : ''
       return (
         <textarea
-          className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3 text-white"
+          className="w-full rounded-lg border border-n33 bg-n215 p-3 text-fg"
           rows={3}
           value={s}
           onChange={(e) => onChange(e.target.value)}
@@ -129,7 +129,7 @@ export function FieldRenderer({ field, value, onChange }: Props) {
             return (
               <button
                 key={opt}
-                className={`${btn} ${on ? 'bg-sky-600 text-white' : 'bg-slate-700 text-slate-300'}`}
+                className={`${btn} ${on ? 'bg-acc text-on-acc' : 'bg-n27 text-n75'}`}
                 onClick={() => onChange((on ? selected.filter((o) => o !== opt) : [...selected, opt]).join(','))}
               >
                 {opt}
@@ -147,7 +147,7 @@ export function FieldRenderer({ field, value, onChange }: Props) {
           <input
             type="number"
             inputMode="numeric"
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3 text-lg text-white"
+            className="w-full rounded-lg border border-n33 bg-n215 p-3 text-lg text-fg"
             value={s}
             onChange={(e) => {
               const n = e.target.valueAsNumber

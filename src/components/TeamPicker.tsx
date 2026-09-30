@@ -35,7 +35,7 @@ export function TeamPicker({ value, onPick }: { value: string; onPick: (teamNumb
     <div className="space-y-1">
       <button
         type="button"
-        className="text-xs font-bold text-slate-400"
+        className="text-xs font-bold text-n72"
         onClick={toggleNicknames}
       >
         {showNicknames ? '🔢 Números' : '🏷️ Nombres'}
@@ -46,7 +46,7 @@ export function TeamPicker({ value, onPick }: { value: string; onPick: (teamNumb
             key={n}
             type="button"
             className={`shrink-0 rounded-lg px-3 py-2 text-sm font-bold ${
-              n === value.trim() ? 'bg-sky-600 text-white' : 'bg-slate-700 text-slate-200'
+              n === value.trim() ? 'bg-acc text-on-acc' : 'bg-n27 text-fg'
             }`}
             onClick={() => onPick(n)}
           >

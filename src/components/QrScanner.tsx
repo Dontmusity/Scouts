@@ -75,12 +75,12 @@ export function QrScanner({
   }, [addMatch])
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950 p-4">
-      <button className="mb-4 rounded-lg bg-slate-700 px-4 py-2 font-bold text-white" onClick={onClose}>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-n12 p-4">
+      <button className="mb-4 rounded-lg bg-n27 px-4 py-2 font-bold text-fg" onClick={onClose}>
         ← Cerrar escáner
       </button>
       <div id={READER_ID} className="mx-auto max-w-sm overflow-hidden rounded-lg" />
-      <ul className="mx-auto mt-4 max-w-sm space-y-1 text-sm text-slate-300">
+      <ul className="mx-auto mt-4 max-w-sm space-y-1 text-sm text-n75">
         {log.map((l, i) => (
           <li key={i}>{l}</li>
         ))}

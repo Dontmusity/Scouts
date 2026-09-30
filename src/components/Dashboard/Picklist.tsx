@@ -67,20 +67,20 @@ export function Picklist({ teams: roster, eventId }: { teams: PredictorTeam[]; e
           value={scoutName}
           onChange={(e) => setScoutName(e.target.value)}
           placeholder="Tu nombre"
-          className="rounded-lg bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-600"
+          className="rounded-lg bg-n215 px-3 py-2 text-sm text-fg placeholder:text-n60 focus:outline-none focus:ring-2 focus:ring-acc"
         />
-        <div className="flex rounded-lg bg-slate-800 p-1 text-sm">
+        <div className="flex rounded-lg bg-n215 p-1 text-sm">
           <button
             type="button"
             onClick={() => setMode('mine')}
-            className={`rounded-md px-3 py-1.5 font-semibold ${mode === 'mine' ? 'bg-sky-600 text-white' : 'text-slate-400'}`}
+            className={`rounded-md px-3 py-1.5 font-semibold ${mode === 'mine' ? 'bg-acc text-on-acc' : 'text-n72'}`}
           >
             Mi lista
           </button>
           <button
             type="button"
             onClick={() => setMode('primary')}
-            className={`rounded-md px-3 py-1.5 font-semibold ${mode === 'primary' ? 'bg-sky-600 text-white' : 'text-slate-400'}`}
+            className={`rounded-md px-3 py-1.5 font-semibold ${mode === 'primary' ? 'bg-acc text-on-acc' : 'text-n72'}`}
           >
             Lista primaria (combinada)
           </button>
@@ -88,7 +88,7 @@ export function Picklist({ teams: roster, eventId }: { teams: PredictorTeam[]; e
       </div>
 
       {mode === 'mine' && !editable && (
-        <p className="text-sm text-amber-400">Escribe tu nombre para poder clasificar equipos.</p>
+        <p className="text-sm text-warn">Escribe tu nombre para poder clasificar equipos.</p>
       )}
 
       <div ref={scrollRef} onDragOver={handleContainerDragOver} className="flex gap-3 overflow-x-auto pb-2 snap-x">
@@ -99,10 +99,10 @@ export function Picklist({ teams: roster, eventId }: { teams: PredictorTeam[]; e
               key={tier}
               onDragOver={(e) => editable && e.preventDefault()}
               onDrop={() => handleDrop(tier)}
-              className="w-64 shrink-0 snap-start rounded-lg bg-slate-950 p-2"
+              className="w-64 shrink-0 snap-start rounded-lg bg-n12 p-2"
             >
-              <h3 className="mb-2 px-1 text-sm font-bold uppercase tracking-wide text-slate-400">
-                {label} <span className="text-slate-600">({teams.length})</span>
+              <h3 className="mb-2 px-1 text-sm font-bold uppercase tracking-wide text-n72">
+                {label} <span className="text-n60">({teams.length})</span>
               </h3>
               <div className="space-y-2">
                 {teams.map((t) => (
@@ -110,16 +110,16 @@ export function Picklist({ teams: roster, eventId }: { teams: PredictorTeam[]; e
                     key={t.teamNumber}
                     draggable={editable}
                     onDragStart={() => setDragTeam(keyFor(t.teamNumber))}
-                    className={`rounded-lg bg-slate-800 p-3 ${
+                    className={`rounded-lg bg-n215 p-3 ${
                       editable ? 'cursor-grab active:cursor-grabbing' : 'opacity-70'
-                    } ${!editable && mode === 'primary' ? 'ring-1 ring-slate-700' : ''}`}
+                    } ${!editable && mode === 'primary' ? 'ring-1 ring-n33' : ''}`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div>
-                        <div className="font-bold text-white">
+                        <div className="font-bold text-fg">
                           Equipo {formatTeamLabel(t.teamNumber, namesByNumber.get(t.teamNumber), true)}
                         </div>
-                        <div className="text-sm text-slate-400">prom. {t.mean.toFixed(1)}</div>
+                        <div className="text-sm text-n72">prom. {t.mean.toFixed(1)}</div>
                       </div>
                       {/* El drag HTML5 nativo no funciona por gestos táctiles en
                           iOS Safari / Chrome Android — este <select> nativo es
@@ -128,7 +128,7 @@ export function Picklist({ teams: roster, eventId }: { teams: PredictorTeam[]; e
                         <select
                           value={tier}
                           onChange={(e) => setTierFor(keyFor(t.teamNumber), e.target.value as Tier)}
-                          className="shrink-0 rounded-md bg-slate-700 px-2 py-1 text-xs text-white"
+                          className="shrink-0 rounded-md bg-n27 px-2 py-1 text-xs text-fg"
                         >
                           {COLUMNS.map((c) => (
                             <option key={c.tier} value={c.tier}>
