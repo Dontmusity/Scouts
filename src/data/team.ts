@@ -3,7 +3,7 @@ import type { GameConfig } from '../types/gameConfig'
 /** Identidad por programa. Cambia esto para usar la app con otro equipo. */
 export const TEAMS: Record<GameConfig['mode'], { number: number; name: string }> = {
   FRC: { number: 3933, name: 'Tamán Keet' },
-  FTC: { number: 15771, name: 'Tamán Keet Primalas' },
+  FTC: { number: 15771, name: 'Tamán Keet' },
 }
 
 /** Numerales mayas (base 20) — glifos U+1D2E0…U+1D2F3. 3933 → 9·16·13. */
