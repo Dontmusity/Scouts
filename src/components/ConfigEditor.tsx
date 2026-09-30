@@ -83,9 +83,7 @@ export function ConfigEditor() {
         <div className="min-w-0 flex-1">
           <p className="text-xs font-bold uppercase tracking-widest text-acc-t">{team.name}</p>
           <p className="text-6xl font-extrabold [font-stretch:62%]">{team.number}</p>
-          <p className="text-xs text-n72">
-            FRC {TEAMS.FRC.number} · FTC {TEAMS.FTC.number}
-          </p>
+          <p className="text-xs text-n72">FRC · FTC</p>
         </div>
         <div className="tk-maya flex flex-col gap-1 text-2xl text-acc-t">
           {mayaGlyphs(team.number).map((g, i) => (
