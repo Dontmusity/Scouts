@@ -14,7 +14,7 @@ import {
 import { useScoutStore } from './store/useScoutStore'
 import { usePitStore } from './store/usePitStore'
 import { useDisplayPrefsStore } from './store/useDisplayPrefsStore'
-import { TEAMS, mayaGlyphs } from './data/team'
+import { BRAND, useTeam, mayaGlyphs } from './data/team'
 import { MatchForm } from './components/MatchForm'
 import { ConfigEditor } from './components/ConfigEditor'
 import { MatchList } from './components/MatchList'
@@ -38,6 +38,7 @@ export default function App() {
   const { init, loaded, config, matches } = useScoutStore()
   const initPit = usePitStore((s) => s.init)
   const { theme, accFRC, accFTC } = useDisplayPrefsStore()
+  const team = useTeam()
   const [tab, setTab] = useState<Tab>('scout')
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
 
@@ -59,7 +60,6 @@ export default function App() {
     return <div className="p-8 text-center text-n72">Cargando…</div>
   }
 
-  const team = TEAMS[config.mode]
   const subtitle = `${config.gameName} · ${config.season}`
   const logo = (
     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[11px] font-extrabold text-brand [font-stretch:62%]">
@@ -99,22 +99,26 @@ export default function App() {
     <div className="min-h-screen bg-n12 text-fg sm:flex">
       {/* iPad: riel angosto · compu (≥1080): riel ancho con marca */}
       <aside data-chrome className="sticky top-0 hidden h-screen shrink-0 flex-col bg-brand p-3 sm:flex sm:w-24 desk:w-60">
-        <div className="mb-6 flex items-center gap-3 desk:px-2">
-          {logo}
-          <div className="hidden min-w-0 desk:block">
-            <p className="truncate font-extrabold leading-tight">
-              {team.name} {team.number}
-            </p>
-            <p className="truncate font-mono text-[11px] uppercase text-n75">{subtitle}</p>
-          </div>
-        </div>
+        {/* iPad: solo el logo arriba */}
+        <div className="mb-6 flex justify-center desk:hidden">{logo}</div>
         <nav className="flex flex-col gap-1 desk:hidden">{tabs.map((t) => navButton(t, 'rail'))}</nav>
         <nav className="hidden flex-col gap-1 desk:flex">{tabs.map((t) => navButton(t, 'wide'))}</nav>
         <div className="mt-auto hidden desk:block">
-          <div className="mb-3 flex items-end justify-between px-2">
-            <span className="tk-outline text-[84px] text-n75">{team.number}</span>
+          {/* Equipo que usa la app — personalizable en Ajustes */}
+          <div className="mb-4 flex items-center gap-3 px-2">
+            {logo}
+            <div className="min-w-0">
+              <p className="line-clamp-2 font-extrabold leading-tight">
+                {team.name} {team.number}
+              </p>
+              <p className="truncate font-mono text-[11px] uppercase text-n75">{subtitle}</p>
+            </div>
+          </div>
+          {/* Marca fija: siempre Tamán Keet 3933, lo use el equipo que lo use */}
+          <div className="mb-3 flex items-end justify-between px-2" title={`${BRAND.name} ${BRAND.number}`}>
+            <span className="tk-outline text-[84px] text-n75">{BRAND.number}</span>
             <span className="tk-maya flex flex-col gap-1 text-2xl">
-              {mayaGlyphs(team.number).map((g, i) => (
+              {mayaGlyphs(BRAND.number).map((g, i) => (
                 <span key={i}>{g}</span>
               ))}
             </span>

@@ -1,9 +1,13 @@
-import type { GameConfig } from '../types/gameConfig'
+import { useDisplayPrefsStore } from '../store/useDisplayPrefsStore'
 
-/** Identidad por programa. Cambia esto para usar la app con otro equipo. */
-export const TEAMS: Record<GameConfig['mode'], { number: number; name: string }> = {
-  FRC: { number: 3933, name: 'Tamán Keet' },
-  FTC: { number: 3933, name: 'Tamán Keet' },
+/** Marca de la app: fija siempre (riel de abajo), sin importar qué equipo la use. */
+export const BRAND = { number: 3933, name: 'Tamán Keet' }
+
+/** Equipo que usa la app — lo personaliza cada equipo en Ajustes (por defecto Tamán Keet 3933). */
+export function useTeam() {
+  const name = useDisplayPrefsStore((s) => s.teamName)
+  const number = useDisplayPrefsStore((s) => s.teamNumber)
+  return { name, number }
 }
 
 /** Numerales mayas (base 20) — glifos U+1D2E0…U+1D2F3. 3933 → 9·16·13. */

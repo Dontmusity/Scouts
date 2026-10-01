@@ -10,9 +10,13 @@ interface DisplayPrefsState {
   /** Color de acento por programa — se aplica según el modo activo. */
   accFRC: Accent
   accFTC: Accent
+  /** Equipo que usa la app (personalizable en Ajustes). */
+  teamName: string
+  teamNumber: number
   toggle: () => void
   setTheme: (theme: Theme) => void
   setAccent: (mode: 'FRC' | 'FTC', acc: Accent) => void
+  setTeam: (name: string, number: number) => void
 }
 
 export const useDisplayPrefsStore = create<DisplayPrefsState>()(
@@ -22,8 +26,11 @@ export const useDisplayPrefsStore = create<DisplayPrefsState>()(
       theme: 'dark',
       accFRC: 'tec',
       accFTC: 'ambar',
+      teamName: 'Tamán Keet',
+      teamNumber: 3933,
       toggle: () => set((s) => ({ showNicknames: !s.showNicknames })),
       setTheme: (theme) => set({ theme }),
+      setTeam: (teamName, teamNumber) => set({ teamName, teamNumber }),
       setAccent: (mode, acc) => set(mode === 'FRC' ? { accFRC: acc } : { accFTC: acc }),
     }),
     { name: 'scouting-display-prefs' },

@@ -4,7 +4,7 @@ import { useScoutStore } from '../store/useScoutStore'
 import { usePitStore } from '../store/usePitStore'
 import { useNexusStore } from '../store/useNexusStore'
 import { FieldRenderer } from './FieldRenderer'
-import { TEAMS } from '../data/team'
+import { useTeam } from '../data/team'
 import { CheckCircleIcon, CircleDashedIcon, MapPinIcon, WrenchIcon, XIcon } from '@phosphor-icons/react'
 import type { PitReport } from '../lib/db'
 import type { GameField } from '../types/gameConfig'
@@ -22,6 +22,7 @@ export function PitScouting() {
   const saveReport = usePitStore((s) => s.saveReport)
   const pitLocations = useNexusStore((s) => s.pits)
   const [activeTeam, setActiveTeam] = useState<Team | null>(null)
+  const ourTeam = useTeam()
 
   const teams = useMemo<Team[]>(() => {
     if (eventTeams.length) {
@@ -42,7 +43,7 @@ export function PitScouting() {
 
   const pitFields = config.fields.filter((f) => f.phase === 'pit')
   const [filter, setFilter] = useState<'todos' | 'faltan' | 'hechos'>('todos')
-  const us = String(TEAMS[config.mode].number)
+  const us = String(ourTeam.number)
   const done = teams.filter((t) => reportByTeam.has(t.teamNumber)).length
   const shown = teams.filter((t) =>
     filter === 'todos' ? true : filter === 'faltan' ? !reportByTeam.has(t.teamNumber) : reportByTeam.has(t.teamNumber),

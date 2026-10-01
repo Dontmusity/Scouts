@@ -1,7 +1,7 @@
 import { CheckCircleIcon, CloudArrowDownIcon, WarningIcon } from '@phosphor-icons/react'
 import { useScoutStore } from '../store/useScoutStore'
 import { useEventStore } from '../store/useEventStore'
-import { TEAMS } from '../data/team'
+import { useTeam } from '../data/team'
 import { NexusPanel } from './NexusPanel'
 import { Field, Spinner, inputCls } from './ui'
 
@@ -13,8 +13,9 @@ export function EventsTab() {
     teams, rankings, matches, syncing, error, scheduleError, lastSyncedAt,
   } = useEventStore()
   const frc = mode === 'FRC'
+  const team = useTeam()
   const code = frc ? tbaEventKey : ftcEventCode
-  const us = TEAMS[mode].number
+  const us = team.number
   const nameOf = (n: number) => teams.find((t) => t.teamNumber === n)?.name ?? ''
 
   return (

@@ -10,7 +10,7 @@ import {
   LinkIcon,
   WarningIcon,
 } from '@phosphor-icons/react'
-import { TEAMS, mayaGlyphs } from '../data/team'
+import { useTeam, mayaGlyphs } from '../data/team'
 import { FieldRenderer, fieldHint, isWideField } from './FieldRenderer'
 import { MatchTimer } from './MatchTimer'
 import { TeamPicker } from './TeamPicker'
@@ -41,6 +41,7 @@ export function MatchForm() {
   const eventMatches = useEventStore((s) => s.matches)
   const eventTeams = useEventStore((s) => s.teams)
   const [phaseIdx, setPhaseIdx] = useState(0)
+  const team = useTeam()
 
   // 'pit' vive en su propia pestaña (un reporte por equipo por temporada, no
   // por partido) — no debe aparecer también aquí en el formulario de partido.
@@ -142,7 +143,6 @@ export function MatchForm() {
     setSaving(false)
   }
 
-  const team = TEAMS[config.mode]
   const phase = phases[phaseIdx] ?? phases[0]
   const m = matchNumber.trim()
   const t = teamNumber.trim()

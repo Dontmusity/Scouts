@@ -3,7 +3,7 @@ import { useScoutStore } from '../store/useScoutStore'
 import { validateGameConfig, type GameConfig } from '../types/gameConfig'
 import { presets, withPresetPoints } from '../data/presets'
 import { loadGameConfig } from '../lib/db'
-import { TEAMS, mayaGlyphs } from '../data/team'
+import { useTeam, mayaGlyphs } from '../data/team'
 import { useDisplayPrefsStore, type Accent } from '../store/useDisplayPrefsStore'
 import { MoonIcon, SunIcon, WarningIcon } from '@phosphor-icons/react'
 
@@ -19,8 +19,8 @@ export function ConfigEditor() {
   const { config, matches, setConfig } = useScoutStore()
   const [text, setText] = useState(() => JSON.stringify(config, null, 2))
   const [error, setError] = useState<string | null>(null)
-  const { theme, accFRC, accFTC, setTheme, setAccent } = useDisplayPrefsStore()
-  const team = TEAMS[config.mode]
+  const { theme, accFRC, accFTC, setTheme, setAccent, setTeam } = useDisplayPrefsStore()
+  const team = useTeam()
 
   const [pending, setPending] = useState<{ next: GameConfig; message: string } | null>(null)
 
@@ -78,10 +78,25 @@ export function ConfigEditor() {
           <br />
           del equipo
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold uppercase tracking-widest text-acc-t">{team.name}</p>
-          <p className="text-6xl font-extrabold [font-stretch:62%]">{team.number}</p>
-          <p className="text-xs text-n72">FRC · FTC</p>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          {/* Cada equipo pone aquí su nombre y número; el riel de abajo sigue siendo Tamán Keet */}
+          <input
+            aria-label="Nombre del equipo"
+            className="w-full min-w-0 rounded-lg bg-transparent text-xs font-bold uppercase tracking-widest text-acc-t focus:outline-2 focus:outline-acc"
+            value={team.name}
+            onChange={(e) => setTeam(e.target.value, team.number)}
+          />
+          <input
+            aria-label="Número del equipo"
+            inputMode="numeric"
+            className="w-full min-w-0 rounded-lg bg-transparent text-6xl font-extrabold [font-stretch:62%] focus:outline-2 focus:outline-acc"
+            value={team.number || ''}
+            onChange={(e) => {
+              const n = Number(e.target.value.replace(/\D/g, '').slice(0, 6))
+              setTeam(team.name, n)
+            }}
+          />
+          <p className="text-xs text-n72">Toca el nombre o el número para poner los de tu equipo.</p>
         </div>
         <div className="tk-maya flex flex-col gap-1 text-2xl text-acc-t">
           {mayaGlyphs(team.number).map((g, i) => (
@@ -108,7 +123,7 @@ export function ConfigEditor() {
         {(['FRC', 'FTC'] as const).map((m) => (
           <div key={m} className="space-y-2">
             <p className="text-sm font-bold">
-              {m} · {TEAMS[m].name} {TEAMS[m].number}{' '}
+              {m}{' '}
               {config.mode === m && <span className="rounded-full bg-acc px-2 text-xs text-on-acc">En uso</span>}
             </p>
             <div className="flex flex-wrap gap-2">
@@ -141,7 +156,7 @@ export function ConfigEditor() {
             >
               <p className="font-extrabold">{p.gameName}</p>
               <p className="text-xs text-n72">
-                {TEAMS[p.mode].name} {TEAMS[p.mode].number} · alianzas de {p.mode === 'FRC' ? 3 : 2}
+                {p.mode} · alianzas de {p.mode === 'FRC' ? 3 : 2}
               </p>
             </button>
           ))}

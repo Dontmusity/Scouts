@@ -5,7 +5,7 @@ import { computeTeamStats, numericFieldsOf } from '../../lib/teamStats'
 import { computeOpr, computeOprResidualVariance } from '../../lib/opr'
 import { computeOfficialConsistency } from '../../lib/officialConsistency'
 import { Bars } from './Bars'
-import { TEAMS } from '../../data/team'
+import { useTeam } from '../../data/team'
 import { ChartBarIcon } from '@phosphor-icons/react'
 import { ConsistencyChart, type ConsistencyEntry, type ConsistencyOption } from './ConsistencyChart'
 import { Picklist } from './Picklist'
@@ -26,6 +26,7 @@ export function Dashboard() {
   const { config, matches } = useScoutStore()
   const eventMatches = useEventStore((s) => s.matches)
   const eventId = useEventStore((s) => (config.mode === 'FRC' ? s.tbaEventKey : s.ftcEventCode))
+  const team = useTeam()
   const stats = useMemo(() => computeTeamStats(matches, config.fields), [matches, config.fields])
 
   const scoutedTeams: PredictorTeam[] = useMemo(
@@ -64,7 +65,7 @@ export function Dashboard() {
     return Array.from(keys).map((k) => ({ id: k, label: BREAKDOWN_LABELS[k] ?? k }))
   }, [officialConsistency])
 
-  const us = String(TEAMS[config.mode].number)
+  const us = String(team.number)
   const card = 'flex flex-col gap-3 rounded-[18px] bg-n215 p-[18px]'
   const title = (t: string, sub: string) => (
     <div className="flex items-baseline justify-between gap-2">
