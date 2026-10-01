@@ -1,3 +1,4 @@
+import { XIcon } from '@phosphor-icons/react'
 import { useEffect, useRef, useState } from 'react'
 import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode'
 import { useScoutStore } from '../store/useScoutStore'
@@ -75,12 +76,16 @@ export function QrScanner({
   }, [addMatch])
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-n12 p-4">
-      <button className="mb-4 rounded-lg bg-n27 px-4 py-2 font-bold text-fg" onClick={onClose}>
-        ← Cerrar escáner
-      </button>
-      <div id={READER_ID} className="mx-auto max-w-sm overflow-hidden rounded-lg" />
-      <ul className="mx-auto mt-4 max-w-sm space-y-1 text-sm text-n75">
+    <div className="fixed inset-0 z-50 flex flex-col gap-4 overflow-y-auto bg-n12 p-5">
+      <div className="flex items-center justify-between">
+        <p className="text-xl font-extrabold">Escanear QR</p>
+        <button aria-label="Cerrar" className="flex h-12 w-12 items-center justify-center rounded-xl bg-n27" onClick={onClose}>
+          <XIcon size={20} weight="bold" />
+        </button>
+      </div>
+      <div id={READER_ID} className="mx-auto w-full max-w-md overflow-hidden rounded-[18px] bg-n19" />
+      <p className="text-center text-[15px] text-n75">Apunta al QR del scout. Se agrega solo al leerlo.</p>
+      <ul className="mx-auto w-full max-w-md space-y-1 text-sm text-n75">
         {log.map((l, i) => (
           <li key={i}>{l}</li>
         ))}

@@ -13,7 +13,7 @@ const STATUS_LABEL: Record<string, string> = {
   closed: 'Conexión cerrada',
 }
 
-export function SyncPanel({ onClose }: { onClose: () => void }) {
+export function SyncPanel() {
   const { role, status, localCode, count, startCentral, acceptAnswer, answerOffer, disconnect } = useSyncStore()
   const [scanning, setScanning] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -44,23 +44,19 @@ export function SyncPanel({ onClose }: { onClose: () => void }) {
   const dotColor = connected ? 'bg-grn' : status === 'connecting' ? 'bg-warn' : 'bg-n60'
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-n12 p-4">
-      <div className="mx-auto max-w-sm space-y-4">
-        <button className="rounded-lg bg-n27 px-4 py-2 font-bold text-fg" onClick={onClose}>
-          ← Volver (la sincronización sigue activa)
-        </button>
-
-        <div className="flex items-center gap-2 rounded-lg bg-n215 p-3">
+    <section className="flex flex-col gap-3.5 rounded-[18px] bg-n215 p-[18px]">
+      <div className="contents">
+        <div className="flex flex-wrap items-center gap-2.5">
           <span className={`h-3 w-3 rounded-full ${dotColor}`} />
-          <span className="font-bold text-fg">{STATUS_LABEL[status] ?? status}</span>
+          <span className="flex-1 text-[17px] font-bold text-fg">{STATUS_LABEL[status] ?? status}</span>
           {role && (
-            <span className="ml-auto text-sm text-n72">
+            <span className="font-mono text-[13px] text-n75">
               {role === 'central' ? `${count} recibidos` : `${count} enviados`}
             </span>
           )}
         </div>
 
-        {error && <p className="rounded-lg bg-bad-t p-3 text-sm text-bad">{error}</p>}
+        {error && <p className="rounded-xl bg-bad-t p-3 text-sm">{error}</p>}
 
         {!role && (
           <div className="space-y-3">
@@ -68,16 +64,16 @@ export function SyncPanel({ onClose }: { onClose: () => void }) {
               Ambos dispositivos deben estar en la misma red Wi-Fi o hotspot. Elige el rol de este dispositivo:
             </p>
             <button
-              className="w-full rounded-lg bg-acc px-4 py-4 text-lg font-bold text-on-acc"
+              className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-acc px-4 font-extrabold text-on-acc"
               onClick={() => startCentral().catch(() => setError('No se pudo crear la conexión.'))}
             >
-              📥 Central (recibe)
+              Central (recibe)
             </button>
             <button
-              className="w-full rounded-lg bg-grn px-4 py-4 text-lg font-bold text-on-grn"
+              className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-n27 px-4 font-bold"
               onClick={() => setScanning(true)}
             >
-              📤 Scout (envía) — escanear QR de la central
+              Scout (envía) — escanear QR de la central
             </button>
           </div>
         )}
@@ -90,15 +86,15 @@ export function SyncPanel({ onClose }: { onClose: () => void }) {
                 : 'Muestra este QR a la central para que lo escanee.'}
             </p>
             <QrCode text={localCode} />
-            <button className="w-full rounded-lg bg-n27 px-4 py-2 font-bold text-fg" onClick={copyCode}>
+            <button className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-n27 px-3.5 font-bold" onClick={copyCode}>
               {copied ? '✓ Copiado' : 'Copiar código (alternativa al QR)'}
             </button>
             {role === 'central' && (
               <button
-                className="w-full rounded-lg bg-grn px-4 py-3 font-bold text-on-grn"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-acc px-4 font-extrabold text-on-acc"
                 onClick={() => setScanning(true)}
               >
-                📷 2. Escanear respuesta del scout
+                2 · Escanear respuesta del scout
               </button>
             )}
           </div>
@@ -107,7 +103,7 @@ export function SyncPanel({ onClose }: { onClose: () => void }) {
         {!connected && (role === 'central' || !role) && (
           <div className="space-y-2">
             <textarea
-              className="w-full rounded-lg bg-n215 p-2 text-xs text-n75"
+              className="w-full rounded-xl border border-n33 bg-n19 px-3 py-2.5 font-mono text-[13px]"
               rows={3}
               placeholder={
                 role === 'central'
@@ -119,17 +115,17 @@ export function SyncPanel({ onClose }: { onClose: () => void }) {
             />
             {pasted.trim() && (
               <button
-                className="w-full rounded-lg bg-acc px-4 py-2 font-bold text-on-acc"
+                className="flex min-h-[52px] w-full items-center justify-center rounded-xl bg-acc font-extrabold text-on-acc"
                 onClick={() => handleCode(pasted)}
               >
-                Usar código pegado
+                Conectar
               </button>
             )}
           </div>
         )}
 
         {connected && (
-          <p className="rounded-lg bg-grn/15 p-3 text-sm text-grn">
+          <p className="text-sm text-n75">
             {role === 'central'
               ? 'Recibiendo partidos automáticamente. Puedes volver a la app; la conexión sigue abierta.'
               : 'Enviando partidos automáticamente. Cada partido nuevo que guardes se enviará solo.'}
@@ -137,7 +133,7 @@ export function SyncPanel({ onClose }: { onClose: () => void }) {
         )}
 
         {role && (
-          <button className="w-full rounded-lg bg-bad-t px-4 py-2 font-bold text-bad" onClick={disconnect}>
+          <button className="min-h-12 self-start rounded-xl border border-n33 px-4 font-bold" onClick={disconnect}>
             Desconectar
           </button>
         )}
@@ -148,6 +144,6 @@ export function SyncPanel({ onClose }: { onClose: () => void }) {
           </Suspense>
         )}
       </div>
-    </div>
+    </section>
   )
 }

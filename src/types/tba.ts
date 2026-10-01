@@ -9,6 +9,7 @@ export interface TbaRanking {
   team_key: string
   /** TBA anida el récord aquí; puede venir null si el evento aún no juega. */
   record: { wins: number; losses: number; ties: number } | null
+  sort_orders?: number[] | null
 }
 
 export interface TbaAlliance {
@@ -26,6 +27,9 @@ export interface EventRanking {
   teamNumber: number
   wins: number
   losses: number
+  ties: number
+  /** Ranking score (TBA sort_orders[0] / FTCScout rp); null si no viene. */
+  rp: number | null
 }
 
 /** Un solo valor primitivo del desglose oficial — ver GameField.breakdownKey. */

@@ -4,6 +4,8 @@ import { useScoutStore } from '../store/useScoutStore'
 import { usePitStore } from '../store/usePitStore'
 import { useNexusStore } from '../store/useNexusStore'
 import { FieldRenderer } from './FieldRenderer'
+import { TEAMS } from '../data/team'
+import { CheckCircleIcon, CircleDashedIcon, MapPinIcon, WrenchIcon, XIcon } from '@phosphor-icons/react'
 import type { PitReport } from '../lib/db'
 import type { GameField } from '../types/gameConfig'
 
@@ -39,42 +41,79 @@ export function PitScouting() {
   }, [reports])
 
   const pitFields = config.fields.filter((f) => f.phase === 'pit')
+  const [filter, setFilter] = useState<'todos' | 'faltan' | 'hechos'>('todos')
+  const us = String(TEAMS[config.mode].number)
+  const done = teams.filter((t) => reportByTeam.has(t.teamNumber)).length
+  const shown = teams.filter((t) =>
+    filter === 'todos' ? true : filter === 'faltan' ? !reportByTeam.has(t.teamNumber) : reportByTeam.has(t.teamNumber),
+  )
 
   return (
-    <div className="mx-auto max-w-2xl p-4 pb-8">
-      <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-acc-t">Pit Scouting</h2>
-
-      {teams.length === 0 && (
-        <p className="text-center text-n60">
-          Sin equipos todavía. Sincroniza un evento en la pestaña Eventos o escanea partidos.
-        </p>
-      )}
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {teams.map((team) => {
-          const scouted = reportByTeam.has(team.teamNumber)
-          return (
-            <button
-              key={team.teamNumber}
-              className="flex flex-col items-start gap-1 rounded-xl bg-n215 p-3 text-left active:scale-95"
-              onClick={() => setActiveTeam(team)}
-            >
-              <span className="text-lg font-bold text-fg">{team.teamNumber}</span>
-              {team.name && <span className="truncate text-xs text-n72">{team.name}</span>}
-              {pitLocations[team.teamNumber] && (
-                <span className="truncate text-xs font-bold text-acc-t">📍 {pitLocations[team.teamNumber]}</span>
-              )}
-              <span
-                className={`mt-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                  scouted ? 'bg-grn text-on-grn' : 'bg-n27 text-n72'
-                }`}
-              >
-                {scouted ? '✓ Escuteado' : 'Sin escutear'}
-              </span>
-            </button>
-          )
-        })}
+    <div className="mx-auto flex max-w-[1100px] flex-col gap-5 p-4 pb-8 text-left sm:p-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <h1 className="text-[32px] font-extrabold [font-stretch:75%]">Pit</h1>
+        <span className="text-sm text-n75">
+          {done} de {teams.length} escuteados
+        </span>
       </div>
+
+      {teams.length > 0 ? (
+        <>
+          <div className="h-2 overflow-hidden rounded-full bg-n27">
+            <div className="h-full bg-grn" style={{ width: `${(done / teams.length) * 100}%` }} />
+          </div>
+          <div className="flex gap-1.5">
+            {(
+              [
+                ['todos', 'Todos'],
+                ['faltan', 'Faltan'],
+                ['hechos', 'Hechos'],
+              ] as const
+            ).map(([k, label]) => (
+              <button
+                key={k}
+                className={`min-h-11 rounded-full border px-4 text-sm font-bold ${filter === k ? 'border-acc bg-acc text-on-acc' : 'border-n33'}`}
+                onClick={() => setFilter(k)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2.5">
+            {shown.map((team) => {
+              const scouted = reportByTeam.has(team.teamNumber)
+              return (
+                <button
+                  key={team.teamNumber}
+                  className={`flex min-h-[108px] flex-col items-start gap-1.5 rounded-2xl border bg-n215 p-3.5 text-left hover:bg-n24 ${team.teamNumber === us ? 'border-acc' : 'border-n215'}`}
+                  onClick={() => setActiveTeam(team)}
+                >
+                  <span className="font-mono text-[22px] font-bold">{team.teamNumber}</span>
+                  <span className="flex-1 text-sm font-semibold">{team.name}</span>
+                  {pitLocations[team.teamNumber] && (
+                    <span className="flex items-center gap-1 text-xs font-bold text-acc-t">
+                      <MapPinIcon size={14} weight="fill" />
+                      {pitLocations[team.teamNumber]}
+                    </span>
+                  )}
+                  <span className={`flex items-center gap-1.5 text-[13px] font-bold ${scouted ? 'text-grn' : 'text-n75'}`}>
+                    {scouted ? <CheckCircleIcon size={16} weight="fill" /> : <CircleDashedIcon size={16} />}
+                    {scouted ? 'Escuteado' : 'Sin escutear'}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col items-start gap-3 rounded-[18px] border border-dashed border-n33 px-6 py-8">
+          <WrenchIcon size={40} weight="duotone" className="text-n75" />
+          <p className="text-xl font-bold">No hay equipos del evento</p>
+          <p className="max-w-[46ch] text-n75">
+            Sincroniza el evento en Eventos para que aparezcan aquí los equipos a escutear, o escanea partidos.
+          </p>
+        </div>
+      )}
 
       {activeTeam && (
         <PitForm
@@ -128,22 +167,25 @@ function PitForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-n12 p-4">
-      <div className="mx-auto w-full max-w-2xl space-y-6 pb-8">
-        <div className="flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center sm:p-6" onClick={onClose}>
+      <div
+        className="flex max-h-full w-full max-w-[560px] flex-col gap-[18px] overflow-auto rounded-t-[22px] bg-n215 p-5 sm:rounded-[22px]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-2.5">
           <div>
-            <h3 className="text-xl font-bold text-fg">Equipo {team.teamNumber}</h3>
-            {team.name && <p className="text-sm text-n72">{team.name}</p>}
-            {pitLocation && <p className="text-sm font-bold text-acc-t">📍 Pit {pitLocation}</p>}
+            <p className="text-[26px] font-extrabold [font-stretch:80%]">Equipo {team.teamNumber}</p>
+            {team.name && <p className="text-n75">{team.name}</p>}
+            {pitLocation && <p className="text-sm font-bold text-acc-t">Pit {pitLocation}</p>}
           </div>
-          <button className="rounded-lg bg-n27 px-3 py-2 font-bold text-fg" onClick={onClose}>
-            Cerrar
+          <button aria-label="Cerrar" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-n27" onClick={onClose}>
+            <XIcon size={20} weight="bold" />
           </button>
         </div>
 
         {fields.map((field) => (
-          <div key={field.id}>
-            <label className="mb-1 block text-sm text-n75">{field.label}</label>
+          <div key={field.id} className="flex flex-col gap-2.5">
+            <span className="font-semibold">{field.label}</span>
             <FieldRenderer
               field={field}
               value={values[field.id]}
@@ -153,11 +195,11 @@ function PitForm({
         ))}
 
         <button
-          className="w-full rounded-xl bg-grn py-4 text-xl font-bold text-on-grn shadow-lg disabled:opacity-40"
+          className="min-h-[60px] shrink-0 rounded-[14px] bg-grn text-[17px] font-extrabold text-on-grn disabled:opacity-40"
           disabled={saving}
           onClick={handleSave}
         >
-          Guardar
+          Guardar pit
         </button>
       </div>
     </div>

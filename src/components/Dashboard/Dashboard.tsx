@@ -4,7 +4,9 @@ import { useEventStore } from '../../store/useEventStore'
 import { computeTeamStats, numericFieldsOf } from '../../lib/teamStats'
 import { computeOpr, computeOprResidualVariance } from '../../lib/opr'
 import { computeOfficialConsistency } from '../../lib/officialConsistency'
-import { TeamStatsChart } from './TeamStatsChart'
+import { Bars } from './Bars'
+import { TEAMS } from '../../data/team'
+import { ChartBarIcon } from '@phosphor-icons/react'
 import { ConsistencyChart, type ConsistencyEntry, type ConsistencyOption } from './ConsistencyChart'
 import { Picklist } from './Picklist'
 import { MatchPredictor, type PredictorTeam } from './MatchPredictor'
@@ -62,63 +64,68 @@ export function Dashboard() {
     return Array.from(keys).map((k) => ({ id: k, label: BREAKDOWN_LABELS[k] ?? k }))
   }, [officialConsistency])
 
-  // Sin scouting manual todavía se puede ver el OPR del evento ya sincronizado
-  // (partidos oficiales jugados) — solo si no hay ninguna de las dos fuentes no hay nada que mostrar.
-  if (stats.length === 0 && oprTeams.length === 0) {
-    return (
-      <p className="p-8 text-center text-n60">
-        {eventMatches.length > 0
-          ? `El cronograma está sincronizado (${eventMatches.length} partidos) pero ninguno tiene resultado oficial publicado todavía — vuelve a sincronizar cuando el evento reporte partidos jugados.`
-          : 'Aún no hay partidos escaneados ni un evento sincronizado con resultados para analizar.'}
-      </p>
-    )
-  }
+  const us = String(TEAMS[config.mode].number)
+  const card = 'flex flex-col gap-3 rounded-[18px] bg-n215 p-[18px]'
+  const title = (t: string, sub: string) => (
+    <div className="flex items-baseline justify-between gap-2">
+      <span className="text-lg font-bold">{t}</span>
+      <span className="text-[13px] text-n75">{sub}</span>
+    </div>
+  )
+  const hasData = stats.length > 0 || oprTeams.length > 0
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8 p-4 pb-16 text-left">
-      {stats.length > 0 && (
-        <section>
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">Promedio por equipo (escaneado)</h2>
-          <TeamStatsChart teams={scoutedTeams} />
-        </section>
-      )}
+    <div className="mx-auto flex max-w-[1240px] flex-col gap-5 p-4 pb-16 text-left sm:p-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <h1 className="text-[32px] font-extrabold [font-stretch:75%]">Análisis</h1>
+        <span className="text-sm text-n75">
+          {matches.length} partidos escaneados · {stats.length} equipos
+        </span>
+      </div>
 
-      {oprTeams.length > 0 && (
-        <section>
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">
-            OPR del evento (partidos oficiales sincronizados)
-          </h2>
-          <TeamStatsChart teams={oprTeams} />
-        </section>
-      )}
+      {/* Sin scouting manual todavía se puede ver el OPR del evento ya sincronizado
+          (partidos oficiales jugados) — solo si no hay ninguna de las dos fuentes no hay nada que mostrar. */}
+      {!hasData ? (
+        <div className="flex flex-col items-start gap-3 rounded-[18px] border border-dashed border-n33 px-6 py-8">
+          <ChartBarIcon size={40} weight="duotone" className="text-n75" />
+          <p className="text-xl font-bold">Faltan datos para analizar</p>
+          <p className="max-w-[52ch] text-n75">
+            {eventMatches.length > 0
+              ? `El cronograma está sincronizado (${eventMatches.length} partidos) pero ninguno tiene resultado oficial publicado todavía — vuelve a sincronizar cuando el evento reporte partidos jugados.`
+              : 'Necesitas al menos un partido escaneado para los promedios y la consistencia, y el evento sincronizado para el OPR. Junta los QR de los scouts en Partidos.'}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-4">
+          {stats.length > 0 && (
+            <section className={card}>
+              {title('Promedio por equipo', 'escaneado / partido')}
+              <Bars rows={scoutedTeams.map((t) => ({ team: t.teamNumber, value: t.mean }))} us={us} />
+            </section>
+          )}
 
-      {(stats.length > 0 || officialConsistency.length > 0) && (
-        <section>
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">
-            Consistencia (desviación estándar — menor es más consistente)
-          </h2>
-          <ConsistencyChart
-            entries={stats.length > 0 ? scoutedConsistency : officialConsistency}
-            options={stats.length > 0 ? scoutedConsistencyOptions : officialConsistencyOptions}
-          />
-        </section>
-      )}
+          {oprTeams.length > 0 && (
+            <section className={card}>
+              {title('OPR del evento', 'partidos oficiales')}
+              <Bars rows={oprTeams.map((t) => ({ team: t.teamNumber, value: t.mean }))} us={us} />
+            </section>
+          )}
 
-      {/* Sin scouting manual todavía, clasifica con OPR para no perder el
-          PickList justo cuando el evento recién se sincronizó. */}
-      {(stats.length > 0 || oprTeams.length > 0) && (
-        <section>
-          <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">
-            PickList (arrastra en desktop o usa el selector en el celular)
-          </h2>
+          {(stats.length > 0 || officialConsistency.length > 0) && (
+            <ConsistencyChart
+              entries={stats.length > 0 ? scoutedConsistency : officialConsistency}
+              options={stats.length > 0 ? scoutedConsistencyOptions : officialConsistencyOptions}
+              us={us}
+            />
+          )}
+
+          <MatchPredictor scoutedTeams={scoutedTeams} oprTeams={oprTeams} allianceSize={config.mode === 'FRC' ? 3 : 2} />
+
+          {/* Sin scouting manual todavía, clasifica con OPR para no perder el
+              PickList justo cuando el evento recién se sincronizó. */}
           <Picklist teams={stats.length > 0 ? scoutedTeams : oprTeams} eventId={eventId} />
-        </section>
+        </div>
       )}
-
-      <section>
-        <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-acc-t">Predicción de partido</h2>
-        <MatchPredictor scoutedTeams={scoutedTeams} oprTeams={oprTeams} allianceSize={config.mode === 'FRC' ? 3 : 2} />
-      </section>
     </div>
   )
 }

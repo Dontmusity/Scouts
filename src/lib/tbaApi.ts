@@ -46,6 +46,8 @@ export async function fetchTbaRankings(eventKey: string, apiKey: string): Promis
     teamNumber: Number(r.team_key.replace('frc', '')),
     wins: r.record?.wins ?? 0,
     losses: r.record?.losses ?? 0,
+    ties: r.record?.ties ?? 0,
+    rp: r.sort_orders?.[0] ?? null,
   }))
 }
 

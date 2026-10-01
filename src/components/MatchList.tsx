@@ -1,6 +1,19 @@
 import { lazy, Suspense, useRef, useState } from 'react'
 import { useScoutStore } from '../store/useScoutStore'
 import { useSyncStore } from '../store/useSyncStore'
+import { useEventStore } from '../store/useEventStore'
+import {
+  ArrowsLeftRightIcon,
+  ClipboardTextIcon,
+  CopyIcon,
+  DownloadSimpleIcon,
+  FileCsvIcon,
+  QrCodeIcon,
+  ScanIcon,
+  TrashIcon,
+  UploadSimpleIcon,
+  type Icon,
+} from '@phosphor-icons/react'
 import { validateMatchEntry, type MatchEntry } from '../lib/db'
 import { compressMatch } from '../lib/qr'
 import { QrCode } from './QrCode'
@@ -72,43 +85,70 @@ export function MatchList() {
   }
 
   const fieldIds = config.fields.map((f) => f.id)
+  const [delId, setDelId] = useState<string | null>(null)
+  const eventTeams = useEventStore((s) => s.teams)
+  const eventMatches = useEventStore((s) => s.matches)
+  const hasPoints = config.fields.some((f) => f.points !== undefined)
+
+  const allianceOf = (m: MatchEntry) => {
+    const r = eventMatches.find((x) => String(x.matchNumber) === m.matchNumber)
+    if (!r) return null
+    return r.red.map(String).includes(m.teamNumber) ? 'red' : r.blue.map(String).includes(m.teamNumber) ? 'blue' : null
+  }
+  const ptsOf = (m: MatchEntry) =>
+    config.fields.reduce((sum, f) => {
+      const v = m.values[f.id]
+      if (f.points === undefined) return sum
+      return sum + (f.type === 'toggle' ? (v === true ? f.points : 0) : typeof v === 'number' ? v * f.points : 0)
+    }, 0)
+
+  const exportActions: [string, Icon, () => void][] = [
+    ['Exportar JSON', DownloadSimpleIcon, () => download(`${config.gameId}-matches.json`, JSON.stringify(matches, null, 2), 'application/json')],
+    ['Exportar CSV', FileCsvIcon, () => download(`${config.gameId}-matches.csv`, toCsv(matches, fieldIds), 'text/csv')],
+    [copied ? '✓ Copiado' : 'Copiar', CopyIcon, handleCopy],
+    ['Importar JSON', UploadSimpleIcon, () => fileRef.current?.click()],
+  ]
+
+  const rows = matches
+    .slice()
+    .sort((a, b) => Number(b.matchNumber) - Number(a.matchNumber) || Number(a.teamNumber) - Number(b.teamNumber))
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 p-4 text-left">
+    <div className="mx-auto flex max-w-[980px] flex-col gap-5 p-4 text-left sm:p-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <h1 className="text-[32px] font-extrabold [font-stretch:75%]">Partidos</h1>
+        <span className="text-sm text-n75">{matches.length} registros en este dispositivo</span>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         <button
-          className="rounded-lg bg-n27 px-3 py-2 text-sm font-bold text-fg"
-          onClick={() => download(`${config.gameId}-matches.json`, JSON.stringify(matches, null, 2), 'application/json')}
-        >
-          Exportar JSON
-        </button>
-        <button
-          className="rounded-lg bg-n27 px-3 py-2 text-sm font-bold text-fg"
-          onClick={() => download(`${config.gameId}-matches.csv`, toCsv(matches, fieldIds), 'text/csv')}
-        >
-          Exportar CSV
-        </button>
-        <button className="rounded-lg bg-n27 px-3 py-2 text-sm font-bold text-fg" onClick={handleCopy}>
-          {copied ? '✓ Copiado' : 'Copiar al portapapeles'}
-        </button>
-        <button
-          className="rounded-lg bg-acc px-3 py-2 text-sm font-bold text-on-acc"
-          onClick={() => fileRef.current?.click()}
-        >
-          Importar JSON
-        </button>
-        <button
-          className="rounded-lg bg-grn px-3 py-2 text-sm font-bold text-on-grn"
+          className="flex min-h-14 flex-[1_1_160px] items-center justify-center gap-2 rounded-[14px] bg-acc px-4 font-extrabold text-on-acc"
           onClick={() => setScanning(true)}
         >
-          📷 Escanear QR (pit/central)
+          <ScanIcon size={22} weight="bold" />
+          Escanear QR
         </button>
         <button
-          className="rounded-lg bg-n27 px-3 py-2 text-sm font-bold text-fg"
-          onClick={() => setSyncing(true)}
+          className="flex min-h-14 flex-[1_1_160px] items-center justify-center gap-2 rounded-[14px] bg-n27 px-4 font-bold"
+          onClick={() => setSyncing((v) => !v)}
         >
-          📶 Sincronizar por Wi-Fi{syncStatus === 'connected' ? ' · ● Conectado' : ''}
+          <ArrowsLeftRightIcon size={22} weight="duotone" />
+          Sincronización en vivo
+          {syncStatus === 'connected' && <span className="h-2.5 w-2.5 rounded-full bg-grn" />}
         </button>
+      </div>
+
+      <div className="flex flex-wrap gap-1.5">
+        {exportActions.map(([label, I, onClick]) => (
+          <button
+            key={label}
+            className="flex min-h-11 items-center gap-1.5 rounded-[10px] border border-n33 px-3.5 text-sm font-semibold hover:bg-n215"
+            onClick={onClick}
+          >
+            <I size={18} />
+            {label}
+          </button>
+        ))}
         <input
           ref={fileRef}
           type="file"
@@ -120,37 +160,83 @@ export function MatchList() {
 
       {importMsg && <p className="text-sm font-bold text-n75">{importMsg}</p>}
 
-      <p className="text-sm text-n72">{matches.length} partidos guardados localmente.</p>
+      {syncing && (
+        <Suspense fallback={null}>
+          <SyncPanel />
+        </Suspense>
+      )}
 
-      <ul className="space-y-2">
-        {matches
-          .slice()
-          .reverse()
-          .map((m) => (
-            <li key={m.id} className="flex items-center justify-between rounded-lg bg-n215 p-3">
-              <span className="text-fg">
-                Partido {m.matchNumber} · Equipo {m.teamNumber}{' '}
-                <span className="text-n72">({m.scoutName || 'sin scout'})</span>
-              </span>
-              <span className="flex gap-3">
-                <button className="text-sm font-bold text-acc-t" onClick={() => setQrMatch(m)}>
-                  QR
-                </button>
-                <button className="text-sm font-bold text-bad" onClick={() => removeMatch(m.id)}>
-                  Eliminar
-                </button>
-              </span>
-            </li>
-          ))}
-      </ul>
+      {rows.length > 0 ? (
+        <div className="flex flex-col gap-2">
+          {rows.map((m) => {
+            const side = allianceOf(m)
+            const confirming = delId === m.id
+            const meta = [
+              m.scoutName || '—',
+              side ? `Alianza ${side === 'red' ? 'roja' : 'azul'}` : 'Sin alianza',
+              ...(hasPoints ? [`${ptsOf(m)} pts`] : []),
+            ].join(' · ')
+            return (
+              <div key={m.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3.5 rounded-[14px] bg-n215 py-3 pl-3.5 pr-3">
+                <div
+                  className={`flex h-[54px] w-[54px] flex-col items-center justify-center rounded-xl ${side === 'red' ? 'bg-bad-t' : side === 'blue' ? 'bg-blu-t' : 'bg-n27'}`}
+                >
+                  <span className="text-[10px] font-bold opacity-80">PART.</span>
+                  <span className="font-mono text-xl font-bold leading-none">{m.matchNumber}</span>
+                </div>
+                <div className="flex min-w-0 flex-col gap-0.5">
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="font-mono text-lg font-bold">{m.teamNumber}</span>
+                    <span className="truncate font-semibold">
+                      {eventTeams.find((t) => String(t.teamNumber) === m.teamNumber)?.name ?? 'Equipo'}
+                    </span>
+                  </div>
+                  <span className="text-[13px] text-n75">{meta}</span>
+                </div>
+                <div className="flex gap-1.5">
+                  <button aria-label="QR" className="flex h-12 w-12 items-center justify-center rounded-xl bg-n27" onClick={() => setQrMatch(m)}>
+                    <QrCodeIcon size={22} weight="duotone" />
+                  </button>
+                  {/* Borrar pide un segundo toque: antes un toque accidental borraba el registro */}
+                  <button
+                    className={`flex h-12 min-w-12 items-center justify-center gap-1.5 rounded-xl px-2.5 text-sm font-bold ${confirming ? 'bg-bad text-white' : 'bg-n27'}`}
+                    onClick={() => {
+                      if (confirming) {
+                        removeMatch(m.id)
+                        setDelId(null)
+                      } else setDelId(m.id)
+                    }}
+                    onBlur={() => confirming && setDelId(null)}
+                  >
+                    <TrashIcon size={20} weight="duotone" />
+                    {confirming && '¿Borrar?'}
+                  </button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="flex flex-col items-start gap-3 rounded-[18px] border border-dashed border-n33 px-6 py-8">
+          <ClipboardTextIcon size={40} weight="duotone" className="text-n75" />
+          <p className="text-xl font-bold">Todavía no hay partidos</p>
+          <p className="max-w-[46ch] text-n75">
+            Captura uno en Scouting o escanea el QR de otro scout. Todo se guarda en este dispositivo, aunque no haya internet.
+          </p>
+        </div>
+      )}
 
       {qrMatch && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-n12/95 p-4">
-          <p className="text-fg">
-            Partido {qrMatch.matchNumber} · Equipo {qrMatch.teamNumber}
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-[18px] bg-n165 p-6 text-center">
+          <p className="text-[17px] text-n75">
+            Partido <b className="font-mono text-fg">{qrMatch.matchNumber}</b> · Equipo{' '}
+            <b className="font-mono text-fg">{qrMatch.teamNumber}</b>
           </p>
-          <QrCode text={compressMatch(qrMatch)} />
-          <button className="rounded-lg bg-n27 px-4 py-2 font-bold text-fg" onClick={() => setQrMatch(null)}>
+          <div className="rounded-[14px] bg-white p-3.5">
+            <QrCode text={compressMatch(qrMatch)} />
+          </div>
+          <p className="max-w-[34ch] text-sm text-n75">Que la central lo escanee en Partidos → Escanear QR. No necesita internet.</p>
+          <button className="min-h-14 w-full max-w-[340px] rounded-[14px] bg-n27 font-bold" onClick={() => setQrMatch(null)}>
             Cerrar
           </button>
         </div>
@@ -159,12 +245,6 @@ export function MatchList() {
       {scanning && (
         <Suspense fallback={null}>
           <QrScanner onClose={() => setScanning(false)} />
-        </Suspense>
-      )}
-
-      {syncing && (
-        <Suspense fallback={null}>
-          <SyncPanel onClose={() => setSyncing(false)} />
         </Suspense>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
+import { Bars } from './Bars'
 
 export interface ConsistencyEntry {
   teamNumber: string
@@ -13,41 +13,34 @@ export interface ConsistencyOption {
 }
 
 /** Menor desviación = equipo más consistente en ese rubro. */
-export function ConsistencyChart({ entries, options }: { entries: ConsistencyEntry[]; options: ConsistencyOption[] }) {
+export function ConsistencyChart({ entries, options, us }: { entries: ConsistencyEntry[]; options: ConsistencyOption[]; us: string }) {
   const [fieldId, setFieldId] = useState<string>('total')
 
-  const data = entries
-    .map((e) => ({
-      team: e.teamNumber,
-      desviacion: Number((fieldId === 'total' ? e.total : (e.byField[fieldId] ?? 0)).toFixed(2)),
-    }))
-    .sort((a, b) => a.desviacion - b.desviacion)
+  const rows = entries
+    .map((e) => ({ team: e.teamNumber, value: fieldId === 'total' ? e.total : (e.byField[fieldId] ?? 0) }))
+    .sort((a, b) => a.value - b.value)
 
   return (
-    <div className="space-y-2">
-      <select
-        value={fieldId}
-        onChange={(e) => setFieldId(e.target.value)}
-        className="rounded-lg bg-n215 px-3 py-2 text-sm text-fg"
-      >
-        <option value="total">Puntaje total</option>
-        {options.map((o) => (
-          <option key={o.id} value={o.id}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      <div className="h-72 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--n27)" />
-            <XAxis dataKey="team" stroke="var(--n60)" fontSize={12} />
-            <YAxis stroke="var(--n60)" fontSize={12} />
-            <Tooltip contentStyle={{ background: 'var(--n215)', border: 'none', color: 'var(--n97)' }} />
-            <Line type="monotone" dataKey="desviacion" stroke="var(--acc)" strokeWidth={2} dot={{ r: 3 }} />
-          </LineChart>
-        </ResponsiveContainer>
+    <section className="flex flex-col gap-3 rounded-[18px] bg-n215 p-[18px]">
+      <div className="flex flex-wrap items-center justify-between gap-2.5">
+        <div className="flex flex-col">
+          <span className="text-lg font-bold">Consistencia</span>
+          <span className="text-[13px] text-n75">Desviación estándar · menor = más consistente</span>
+        </div>
+        <select
+          value={fieldId}
+          onChange={(e) => setFieldId(e.target.value)}
+          className="h-11 max-w-full rounded-[10px] border border-n33 bg-n19 px-2.5 font-semibold text-fg"
+        >
+          <option value="total">Puntos totales</option>
+          {options.map((o) => (
+            <option key={o.id} value={o.id}>
+              {o.label}
+            </option>
+          ))}
+        </select>
       </div>
-    </div>
+      <Bars rows={rows} us={us} decimals={1} />
+    </section>
   )
 }

@@ -66,7 +66,7 @@ export async function fetchFtcEventTeams(season: number, code: string): Promise<
 
 interface EventRankingsResponse {
   eventByCode: {
-    teams: { team: { number: number }; stats: { rank: number; wins: number; losses: number } | null }[]
+    teams: { team: { number: number }; stats: { rank: number; wins: number; losses: number; ties: number; rp: number } | null }[]
   } | null
 }
 
@@ -105,12 +105,19 @@ export async function fetchFtcEventRankings(season: number, code: string): Promi
   // El nombre del fragmento (TeamEventStats<año>) no admite variables GraphQL;
   // assertSeason ya garantizó que season es un entero antes de interpolarlo.
   const data = await ftcQuery<EventRankingsResponse>(
-    `query($season: Int!, $code: String!){ eventByCode(season: $season, code: $code) { teams { team { number } stats { ... on TeamEventStats${season} { rank wins losses } } } } }`,
+    `query($season: Int!, $code: String!){ eventByCode(season: $season, code: $code) { teams { team { number } stats { ... on TeamEventStats${season} { rank wins losses ties rp } } } } }`,
     { season, code: code.trim() },
   )
   if (!data.eventByCode) throw new Error('Evento no encontrado en FTCScout')
   return data.eventByCode.teams
     .filter((t) => t.stats)
-    .map((t) => ({ rank: t.stats!.rank, teamNumber: t.team.number, wins: t.stats!.wins, losses: t.stats!.losses }))
+    .map((t) => ({
+      rank: t.stats!.rank,
+      teamNumber: t.team.number,
+      wins: t.stats!.wins,
+      losses: t.stats!.losses,
+      ties: t.stats!.ties,
+      rp: t.stats!.rp,
+    }))
     .sort((a, b) => a.rank - b.rank)
 }

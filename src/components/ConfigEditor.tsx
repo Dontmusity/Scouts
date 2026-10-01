@@ -5,7 +5,7 @@ import { presets, withPresetPoints } from '../data/presets'
 import { loadGameConfig } from '../lib/db'
 import { TEAMS, mayaGlyphs } from '../data/team'
 import { useDisplayPrefsStore, type Accent } from '../store/useDisplayPrefsStore'
-import { MoonIcon, SunIcon } from '@phosphor-icons/react'
+import { MoonIcon, SunIcon, WarningIcon } from '@phosphor-icons/react'
 
 
 const ACCENTS: [Accent, string, string][] = [
@@ -22,51 +22,50 @@ export function ConfigEditor() {
   const { theme, accFRC, accFTC, setTheme, setAccent } = useDisplayPrefsStore()
   const team = TEAMS[config.mode]
 
+  const [pending, setPending] = useState<{ next: GameConfig; message: string } | null>(null)
+
   /**
    * Un gameId nuevo, o un field id que ya no existe, no borra los partidos
    * guardados — pero deja de mostrarlos (por gameId) o los muestra en 0 (por
    * field id), y a mitad de un evento eso parece pérdida de datos. Avisamos
    * antes de aplicar.
    */
-  function confirmIfHidesData(next: GameConfig): boolean {
-    if (matches.length === 0) return true
-    if (next.gameId !== config.gameId) {
-      return window.confirm(
-        `Este config usa un "gameId" distinto. Los ${matches.length} partidos guardados quedarán ocultos (no se borran) hasta volver al gameId anterior. ¿Continuar?`,
-      )
-    }
+  function hidesDataMessage(next: GameConfig): string | null {
+    if (matches.length === 0) return null
+    if (next.gameId !== config.gameId)
+      return `Los ${matches.length} partidos guardados con este juego se van a ocultar. No se borran: vuelven al regresar a este juego.`
     const nextIds = new Set(next.fields.map((f) => f.id))
     const orphaned = config.fields.filter((f) => !nextIds.has(f.id) && matches.some((m) => f.id in m.values))
-    if (orphaned.length > 0) {
-      return window.confirm(
-        `Estos campos ya tienen datos guardados y no están en el nuevo config: ${orphaned.map((f) => f.label).join(', ')}. Sus valores quedarán invisibles (se verán en 0) en los partidos ya guardados. ¿Continuar?`,
-      )
-    }
-    return true
+    if (orphaned.length > 0)
+      return `Estos campos ya tienen datos guardados y no están en el nuevo config: ${orphaned.map((f) => f.label).join(', ')}. Sus valores quedarán invisibles (se verán en 0) en los partidos ya guardados.`
+    return null
+  }
+
+  function apply(next: GameConfig) {
+    setText(JSON.stringify(next, null, 2))
+    setConfig(next)
+    setError(null)
+    setPending(null)
+  }
+
+  function tryApply(next: GameConfig) {
+    const message = hidesDataMessage(next)
+    if (message) setPending({ next, message })
+    else apply(next)
   }
 
   function handleApply() {
     try {
-      const next = validateGameConfig(JSON.parse(text))
-      if (confirmIfHidesData(next)) {
-        setConfig(next)
-        setError(null)
-      }
+      tryApply(validateGameConfig(JSON.parse(text)))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'JSON inválido')
     }
   }
 
-
   async function loadPreset(preset: GameConfig) {
     // Si ya se usó antes, retoma su versión guardada (con las ediciones que se le hayan hecho)
     const stored = await loadGameConfig(preset.gameId)
-    const next = stored ? withPresetPoints(stored) : preset
-    if (confirmIfHidesData(next)) {
-      setText(JSON.stringify(next, null, 2))
-      setConfig(next)
-      setError(null)
-    }
+    tryApply(stored ? withPresetPoints(stored) : preset)
   }
 
   return (
@@ -149,26 +148,45 @@ export function ConfigEditor() {
         </div>
       </section>
 
-      <h2 className="text-lg font-bold">JSON del juego</h2>
-      <p className="text-sm text-n72">
-        Edita el JSON de configuración del juego (campos, tipos: counter, toggle, dropdown, rating, fieldMap, text) y aplica.
-      </p>
+      <section className="flex flex-col gap-2.5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2.5">
+          <h2 className="text-lg font-bold">JSON del juego</h2>
+          <span className="text-[13px] text-n75">Define fases y campos del formulario</span>
+        </div>
+        <textarea
+          className={`w-full resize-y rounded-[14px] border bg-n12 p-3.5 font-mono text-[12.5px] leading-[1.55] text-fg ${error ? 'border-bad' : 'border-n33'}`}
+          rows={14}
+          spellCheck={false}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        {error && (
+          <div className="flex gap-2.5 rounded-xl bg-bad-t px-3.5 py-3">
+            <WarningIcon size={20} weight="duotone" className="shrink-0" />
+            <span className="font-mono text-[13px]">{error}</span>
+          </div>
+        )}
+        <button className="min-h-14 self-start rounded-[14px] bg-acc px-[22px] font-extrabold text-on-acc" onClick={handleApply}>
+          Aplicar configuración
+        </button>
+      </section>
 
-      <textarea
-        className="h-96 w-full rounded-lg border border-n33 bg-n165 p-3 font-mono text-xs text-grn"
-        spellCheck={false}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-
-      {error && <p className="text-sm font-bold text-bad">{error}</p>}
-
-      <button
-        className="w-full rounded-xl bg-acc py-3 font-bold text-on-acc"
-        onClick={handleApply}
-      >
-        Aplicar configuración
-      </button>
+      {pending && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-5">
+          <div className="flex max-w-[420px] flex-col gap-3.5 rounded-[20px] bg-n215 p-[22px]">
+            <p className="text-[22px] font-extrabold">¿Aplicar configuración?</p>
+            <p className="text-n75">{pending.message}</p>
+            <div className="flex gap-2">
+              <button className="min-h-[52px] flex-1 rounded-xl bg-n27 font-bold" onClick={() => setPending(null)}>
+                Cancelar
+              </button>
+              <button className="min-h-[52px] flex-1 rounded-xl bg-acc font-extrabold text-on-acc" onClick={() => apply(pending.next)}>
+                Aplicar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
