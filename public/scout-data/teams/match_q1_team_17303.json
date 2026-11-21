@@ -1,0 +1,31 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "gameId": "ftc-biobuzz-2026",
+  "matchNumber": "1",
+  "teamNumber": "17303",
+  "scoutName": "AI-Scout",
+  "createdAt": 1730390400000,
+  "values": {
+    "allyTeam1": 17303,
+    "startSpot": null,
+    "autoLeave": true,
+    "autoPark": true,
+    "autoLaunched": 5,
+    "autoTips": 3,
+    "officialAutoPoints": 68,
+    "teleopLaunched": 18,
+    "teleopTips": 4,
+    "gardenElements": 10,
+    "launchAccuracy": 4,
+    "defensePlayed": false,
+    "flowerElements": 3,
+    "flowerNectar": true,
+    "endPark": true,
+    "allianceScore": 190,
+    "opponentAllianceScore": 95,
+    "driverSkill": 5,
+    "robotSpeed": 5,
+    "tags": ["Rápido", "Preciso", "Buen piloto"],
+    "notes": "World Record 190 NP - Team 17303 Panther Robotics - Salk League Meet 1 WA"
+  }
+}

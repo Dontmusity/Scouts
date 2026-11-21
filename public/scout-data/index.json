@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "event_code": "2026wasal",
+  "event_name": "Salk League Meet 1",
+  "season": 2026,
+  "game": "BIOBUZZ",
+  "manual_version": "TU10",
+  "generated_at": "2026-11-20T20:25:00Z",
+  "matches": [
+    {
+      "match_id": "2026wasal_QM_1",
+      "level": "qm",
+      "number": 1,
+      "video_url": "https://www.youtube.com/watch?v=o4KXMoj3d74",
+      "teams": ["17303"],
+      "json_file": "teams/match_q1_team_17303.json"
+    },
+    {
+      "match_id": "2026wasal_QM_3",
+      "level": "qm",
+      "number": 3,
+      "video_url": "https://www.youtube.com/watch?v=EFLYcMxrTOM",
+      "teams": ["21229", "27393", "16655", "35817"],
+      "json_files": [
+        "teams/match_q3_team_21229.json",
+        "teams/match_q3_team_27393.json",
+        "teams/match_q3_team_16655.json",
+        "teams/match_q3_team_35817.json"
+      ]
+    }
+  ],
+  "teams_analyzed": [17303, 21229, 27393, 16655, 35817],
+  "files": {
+    "matches_json": "matches.json",
+    "matches_csv": "matches.csv",
+    "teams_dir": "teams/"
+  }
+}

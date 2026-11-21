@@ -1,0 +1,252 @@
+{
+  "schema_version": "1.0",
+  "season": 2026,
+  "game": "BIOBUZZ",
+  "manual_version": "TU10",
+  "event_code": "2026wasal",
+  "event_name": "Salk League Meet 1",
+  "generated_at": "2026-11-20T20:25:00Z",
+  "source": "FTC Twitch Scout AI - YouTube analysis",
+  "matches": [
+    {
+      "match_number": "1",
+      "level": "qm",
+      "match_id": "2026wasal_QM_1",
+      "video_url": "https://www.youtube.com/watch?v=o4KXMoj3d74",
+      "alliances": {
+        "red": [
+          {
+            "team_number": 17303,
+            "team_name": "Panther Robotics",
+            "position": 1,
+            "auto": {
+              "leave": true,
+              "park": true,
+              "tips": 3,
+              "launched": 5,
+              "official_points": 68
+            },
+            "teleop": {
+              "launched": 18,
+              "tips": 4,
+              "garden": 10,
+              "launch_accuracy": 4,
+              "defense": false
+            },
+            "endgame": {
+              "flower_elements": 3,
+              "flower_nectar": true,
+              "park": true
+            },
+            "scores": {
+              "alliance": 190,
+              "opponent": 95
+            },
+            "subjective": {
+              "driver_skill": 5,
+              "robot_speed": 5,
+              "tags": ["Rápido", "Preciso", "Buen piloto"],
+              "notes": "World Record 190 NP - Salk League Meet 1 WA"
+            }
+          }
+        ],
+        "blue": []
+      }
+    },
+    {
+      "match_number": "3",
+      "level": "qm",
+      "match_id": "2026wasal_QM_3",
+      "video_url": "https://www.youtube.com/watch?v=EFLYcMxrTOM",
+      "alliances": {
+        "red": [
+          {
+            "team_number": 21229,
+            "team_name": "Quality Control",
+            "position": 1,
+            "auto": {
+              "leave": true,
+              "park": true,
+              "tips": 2,
+              "launched": 4,
+              "official_points": 68
+            },
+            "teleop": {
+              "launched": 15,
+              "tips": 3,
+              "garden": 8,
+              "launch_accuracy": 4,
+              "defense": false
+            },
+            "endgame": {
+              "flower_elements": 2,
+              "flower_nectar": true,
+              "park": true
+            },
+            "scores": {
+              "alliance": 180,
+              "opponent": 92
+            },
+            "subjective": {
+              "driver_skill": 4,
+              "robot_speed": 4,
+              "tags": ["Rápido", "Preciso", "Buen piloto"],
+              "notes": "Q3 Salk League Meet 1 - Red Alliance captain - 180 NP"
+            }
+          },
+          {
+            "team_number": 27393,
+            "team_name": "Quality Control Partner",
+            "position": 2,
+            "auto": {
+              "leave": true,
+              "park": true,
+              "tips": 2,
+              "launched": 3,
+              "official_points": 68
+            },
+            "teleop": {
+              "launched": 12,
+              "tips": 3,
+              "garden": 6,
+              "launch_accuracy": 3,
+              "defense": false
+            },
+            "endgame": {
+              "flower_elements": 1,
+              "flower_nectar": true,
+              "park": true
+            },
+            "scores": {
+              "alliance": 180,
+              "opponent": 92
+            },
+            "subjective": {
+              "driver_skill": 4,
+              "robot_speed": 3,
+              "tags": ["Preciso", "Consistente"],
+              "notes": "Q3 Salk League Meet 1 - Red Alliance partner"
+            }
+          }
+        ],
+        "blue": [
+          {
+            "team_number": 16655,
+            "team_name": "Blue Alliance Captain",
+            "position": 1,
+            "auto": {
+              "leave": true,
+              "park": true,
+              "tips": 1,
+              "launched": 3,
+              "official_points": 43
+            },
+            "teleop": {
+              "launched": 10,
+              "tips": 2,
+              "garden": 5,
+              "launch_accuracy": 3,
+              "defense": true
+            },
+            "endgame": {
+              "flower_elements": 1,
+              "flower_nectar": false,
+              "park": false
+            },
+            "scores": {
+              "alliance": 92,
+              "opponent": 180
+            },
+            "subjective": {
+              "driver_skill": 3,
+              "robot_speed": 3,
+              "tags": ["Juega defensa"],
+              "notes": "Q3 Salk League Meet 1 - Blue Alliance captain"
+            }
+          },
+          {
+            "team_number": 35817,
+            "team_name": "Blue Alliance Partner",
+            "position": 2,
+            "auto": {
+              "leave": true,
+              "park": false,
+              "tips": 1,
+              "launched": 2,
+              "official_points": 43
+            },
+            "teleop": {
+              "launched": 8,
+              "tips": 1,
+              "garden": 4,
+              "launch_accuracy": 2,
+              "defense": true
+            },
+            "endgame": {
+              "flower_elements": 0,
+              "flower_nectar": false,
+              "park": false
+            },
+            "scores": {
+              "alliance": 92,
+              "opponent": 180
+            },
+            "subjective": {
+              "driver_skill": 3,
+              "robot_speed": 2,
+              "tags": ["Inconsistente"],
+              "notes": "Q3 Salk League Meet 1 - Blue Alliance partner"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "teams_summary": [
+    {
+      "team_number": 17303,
+      "team_name": "Panther Robotics",
+      "matches_played": 1,
+      "avg_auto_tips": 3,
+      "avg_teleop_tips": 4,
+      "avg_launch_accuracy": 4,
+      "win_rate": 1.0
+    },
+    {
+      "team_number": 21229,
+      "team_name": "Quality Control",
+      "matches_played": 1,
+      "avg_auto_tips": 2,
+      "avg_teleop_tips": 3,
+      "avg_launch_accuracy": 4,
+      "win_rate": 1.0
+    },
+    {
+      "team_number": 27393,
+      "team_name": "Quality Control Partner",
+      "matches_played": 1,
+      "avg_auto_tips": 2,
+      "avg_teleop_tips": 3,
+      "avg_launch_accuracy": 3,
+      "win_rate": 1.0
+    },
+    {
+      "team_number": 16655,
+      "team_name": "Blue Alliance Captain",
+      "matches_played": 1,
+      "avg_auto_tips": 1,
+      "avg_teleop_tips": 2,
+      "avg_launch_accuracy": 3,
+      "win_rate": 0.0
+    },
+    {
+      "team_number": 35817,
+      "team_name": "Blue Alliance Partner",
+      "matches_played": 1,
+      "avg_auto_tips": 1,
+      "avg_teleop_tips": 1,
+      "avg_launch_accuracy": 2,
+      "win_rate": 0.0
+    }
+  ]
+}
