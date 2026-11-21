@@ -1,0 +1,31 @@
+{
+  "id": "q3-21229-001",
+  "gameId": "ftc-biobuzz-2026",
+  "matchNumber": "3",
+  "teamNumber": "21229",
+  "scoutName": "AI-Scout",
+  "createdAt": 1730476800000,
+  "values": {
+    "allyTeam1": 27393,
+    "startSpot": null,
+    "autoLeave": true,
+    "autoPark": true,
+    "autoLaunched": 4,
+    "autoTips": 2,
+    "officialAutoPoints": 68,
+    "teleopLaunched": 15,
+    "teleopTips": 3,
+    "gardenElements": 8,
+    "launchAccuracy": 4,
+    "defensePlayed": false,
+    "flowerElements": 2,
+    "flowerNectar": true,
+    "endPark": true,
+    "allianceScore": 180,
+    "opponentAllianceScore": 92,
+    "driverSkill": 4,
+    "robotSpeed": 4,
+    "tags": ["Rápido", "Preciso", "Buen piloto"],
+    "notes": "Q3 Salk League Meet 1 - Red Alliance captain - 180 NP World Record pace"
+  }
+}

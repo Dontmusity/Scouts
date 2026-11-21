@@ -1,0 +1,170 @@
+{
+  "schema_version": "1.0",
+  "season": 2026,
+  "game": "BIOBUZZ",
+  "manual_version": "TU10",
+  "event_code": "2026wasal",
+  "matches": [
+    {
+      "match_id": "2026wasal_QM_1",
+      "level": "qm",
+      "number": 1,
+      "red": [17303, 0],
+      "blue": [0, 0],
+      "red_score": 190,
+      "blue_score": 95,
+      "red_rp": 2,
+      "blue_rp": 0,
+      "robots": [
+        {
+          "team_number": 17303,
+          "alliance": "red",
+          "position": 1,
+          "metrics": {
+            "auto_leave": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_park": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_tips": {"value": 3, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "auto_launched": {"value": 5, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "teleop_tips": {"value": 4, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "teleop_launched": {"value": 18, "status": "estimated", "confidence": 0.75, "evidence": []},
+            "teleop_scored": {"value": 10, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "garden_elements": {"value": 10, "status": "confirmed", "confidence": 0.8, "evidence": []},
+            "launch_accuracy": {"value": 0.8, "status": "estimated", "confidence": 0.75},
+            "defense_played": {"value": false, "status": "confirmed", "confidence": 0.9},
+            "flower_elements": {"value": 3, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "flower_nectar": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "end_park": {"value": true, "status": "confirmed", "confidence": 0.95, "evidence": []}
+          },
+          "validation_status": "validated",
+          "source": {
+            "platform": "youtube",
+            "video_url": "https://www.youtube.com/watch?v=o4KXMoj3d74",
+            "start_offset": 0,
+            "end_offset": 190
+          }
+        }
+      ]
+    },
+    {
+      "match_id": "2026wasal_QM_3",
+      "level": "qm",
+      "number": 3,
+      "red": [21229, 27393],
+      "blue": [16655, 35817],
+      "red_score": 180,
+      "blue_score": 92,
+      "red_rp": 2,
+      "blue_rp": 0,
+      "robots": [
+        {
+          "team_number": 21229,
+          "alliance": "red",
+          "position": 1,
+          "metrics": {
+            "auto_leave": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_park": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_tips": {"value": 2, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "auto_launched": {"value": 4, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "teleop_tips": {"value": 3, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "teleop_launched": {"value": 15, "status": "estimated", "confidence": 0.75, "evidence": []},
+            "teleop_scored": {"value": 8, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "garden_elements": {"value": 8, "status": "confirmed", "confidence": 0.8, "evidence": []},
+            "launch_accuracy": {"value": 0.8, "status": "estimated", "confidence": 0.75},
+            "defense_played": {"value": false, "status": "confirmed", "confidence": 0.9},
+            "flower_elements": {"value": 2, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "flower_nectar": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "end_park": {"value": true, "status": "confirmed", "confidence": 0.95, "evidence": []}
+          },
+          "validation_status": "validated",
+          "source": {
+            "platform": "youtube",
+            "video_url": "https://www.youtube.com/watch?v=EFLYcMxrTOM",
+            "start_offset": 0,
+            "end_offset": 170
+          }
+        },
+        {
+          "team_number": 27393,
+          "alliance": "red",
+          "position": 2,
+          "metrics": {
+            "auto_leave": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_park": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_tips": {"value": 2, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "auto_launched": {"value": 3, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "teleop_tips": {"value": 3, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "teleop_launched": {"value": 12, "status": "estimated", "confidence": 0.75, "evidence": []},
+            "teleop_scored": {"value": 6, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "garden_elements": {"value": 6, "status": "confirmed", "confidence": 0.8, "evidence": []},
+            "launch_accuracy": {"value": 0.6, "status": "estimated", "confidence": 0.75},
+            "defense_played": {"value": false, "status": "confirmed", "confidence": 0.9},
+            "flower_elements": {"value": 1, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "flower_nectar": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "end_park": {"value": true, "status": "confirmed", "confidence": 0.95, "evidence": []}
+          },
+          "validation_status": "validated",
+          "source": {
+            "platform": "youtube",
+            "video_url": "https://www.youtube.com/watch?v=EFLYcMxrTOM",
+            "start_offset": 0,
+            "end_offset": 170
+          }
+        },
+        {
+          "team_number": 16655,
+          "alliance": "blue",
+          "position": 1,
+          "metrics": {
+            "auto_leave": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_park": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_tips": {"value": 1, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "auto_launched": {"value": 3, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "teleop_tips": {"value": 2, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "teleop_launched": {"value": 10, "status": "estimated", "confidence": 0.75, "evidence": []},
+            "teleop_scored": {"value": 5, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "garden_elements": {"value": 5, "status": "confirmed", "confidence": 0.8, "evidence": []},
+            "launch_accuracy": {"value": 0.6, "status": "estimated", "confidence": 0.75},
+            "defense_played": {"value": true, "status": "confirmed", "confidence": 0.9},
+            "flower_elements": {"value": 1, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "flower_nectar": {"value": false, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "end_park": {"value": false, "status": "confirmed", "confidence": 0.95, "evidence": []}
+          },
+          "validation_status": "validated",
+          "source": {
+            "platform": "youtube",
+            "video_url": "https://www.youtube.com/watch?v=EFLYcMxrTOM",
+            "start_offset": 0,
+            "end_offset": 170
+          }
+        },
+        {
+          "team_number": 35817,
+          "alliance": "blue",
+          "position": 2,
+          "metrics": {
+            "auto_leave": {"value": true, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_park": {"value": false, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "auto_tips": {"value": 1, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "auto_launched": {"value": 2, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "teleop_tips": {"value": 1, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "teleop_launched": {"value": 8, "status": "estimated", "confidence": 0.75, "evidence": []},
+            "teleop_scored": {"value": 4, "status": "estimated", "confidence": 0.7, "evidence": []},
+            "garden_elements": {"value": 4, "status": "confirmed", "confidence": 0.8, "evidence": []},
+            "launch_accuracy": {"value": 0.5, "status": "estimated", "confidence": 0.75},
+            "defense_played": {"value": true, "status": "confirmed", "confidence": 0.9},
+            "flower_elements": {"value": 0, "status": "confirmed", "confidence": 0.85, "evidence": []},
+            "flower_nectar": {"value": false, "status": "confirmed", "confidence": 0.9, "evidence": []},
+            "end_park": {"value": false, "status": "confirmed", "confidence": 0.95, "evidence": []}
+          },
+          "validation_status": "validated",
+          "source": {
+            "platform": "youtube",
+            "video_url": "https://www.youtube.com/watch?v=EFLYcMxrTOM",
+            "start_offset": 0,
+            "end_offset": 170
+          }
+        }
+      ]
+    }
+  ]
+}

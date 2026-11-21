@@ -1,0 +1,6 @@
+match_number,team_number,alliance,alliance_position,scout_name,auto_leave,auto_park,auto_tips,auto_launched,teleop_launched,teleop_tips,garden_elements,launch_accuracy,defense_played,flower_elements,flower_nectar,end_park,alliance_score,opponent_score,driver_skill,robot_speed,tags,notes
+1,17303,red,1,AI-Scout,TRUE,TRUE,3,5,18,4,10,4,FALSE,3,TRUE,TRUE,190,95,5,5,"Rápido;Preciso;Buen piloto","World Record 190 NP - Team 17303 Panther Robotics - Salk League Meet 1 WA"
+3,21229,red,1,AI-Scout,TRUE,TRUE,2,4,15,3,8,4,FALSE,2,TRUE,TRUE,180,92,4,4,"Rápido;Preciso;Buen piloto","Q3 Salk League Meet 1 - Red Alliance captain - 180 NP"
+3,27393,red,2,AI-Scout,TRUE,TRUE,2,3,12,3,6,3,FALSE,1,TRUE,TRUE,180,92,4,3,"Preciso;Consistente","Q3 Salk League Meet 1 - Red Alliance partner"
+3,16655,blue,1,AI-Scout,TRUE,TRUE,1,3,10,2,5,3,TRUE,1,FALSE,FALSE,92,180,3,3,"Juega defensa","Q3 Salk League Meet 1 - Blue Alliance captain"
+3,35817,blue,2,AI-Scout,TRUE,FALSE,1,2,8,1,4,2,TRUE,0,FALSE,FALSE,92,180,3,2,"Inconsistente","Q3 Salk League Meet 1 - Blue Alliance partner"

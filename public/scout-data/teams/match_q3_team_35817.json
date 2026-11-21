@@ -1,0 +1,31 @@
+{
+  "id": "q3-35817-001",
+  "gameId": "ftc-biobuzz-2026",
+  "matchNumber": "3",
+  "teamNumber": "35817",
+  "scoutName": "AI-Scout",
+  "createdAt": 1730476800000,
+  "values": {
+    "allyTeam1": 16655,
+    "startSpot": null,
+    "autoLeave": true,
+    "autoPark": false,
+    "autoLaunched": 2,
+    "autoTips": 1,
+    "officialAutoPoints": 43,
+    "teleopLaunched": 8,
+    "teleopTips": 1,
+    "gardenElements": 4,
+    "launchAccuracy": 2,
+    "defensePlayed": true,
+    "flowerElements": 0,
+    "flowerNectar": false,
+    "endPark": false,
+    "allianceScore": 92,
+    "opponentAllianceScore": 180,
+    "driverSkill": 3,
+    "robotSpeed": 2,
+    "tags": ["Inconsistente"],
+    "notes": "Q3 Salk League Meet 1 - Blue Alliance partner"
+  }
+}
